@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Instant Search Example</title>
+    <link rel="stylesheet" type="text/css" href="example.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../src/ejs.js"></script>
+    <script type="text/javascript" src="../src/jquery.instantsearch.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#qfq').instantSearch({
+          source: function (req, res) {
+            $.ajax({
+              url: 'http://developer.echonest.com/api/v4/artist/suggest',
+              dataType: 'jsonp',
+              data: {
+                results: 12,
+                api_key: 'N6E4NIOVYMTHNDM8J',
+                format: 'jsonp',
+                name: req.term
+              },
+              success: function (data) {
+                res(data, null);
+              },
+              error: function (xhr, status, err) {
+                res(null, err);
+              }
+            });
+          }
+        });
+       });
+    </script>
+  </head>
+  <body>
+    <form id="qf" action="/search">
+      <fieldset id="qff">
+        <div id="qfqw">
+          <div id="qfqwb">
+            <table cellspacing="0" cellpadding="0">
+              <tr>
+                <td style="vertical-align: top;">
+                  <table cellspacing="0" cellpadding="0" style="width: 100%">
+                    <tbody>
+                      <tr>
+                        <td style="min-width:1px;white-space:nowrap;"></td>
+                        <td class="sib_a">
+                          <div id="qfqfi">
+                            <input id="qfq" class="qfif" name="q" type="text" autocomplete="off" dir="ltr">
+                            <div class="qfif" id="qfqfa">a</div>
+                            <div class="qfif" id="qfqfl" style="display: none;"></div>
+                            <div class="qfif" id="qfqfb">amazon</div>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+    <table cellspacing="0" cellpadding="0" class="sbr_c">
+      <tbody>
+        <tr>
+          <td style="width: 100%;">
+            <table cellspacing="0" cellpadding="0" style="width: 100%;" class="sbr_d">
+              <tbody>
+                <tr>
+                  <td>
+                    <table cellspacing="0" cellpadding="0" style="width: 100%;" class="sbr_e">
+                      <tbody>
+                        <tr>
+                          <td class="sbr_a" dir="ltr" style="text-align: left;">
+                            <div class="sbq_a">
+                              <table cellspacing="0" cellpadding="0" style="width: 100%;" class="sbr_m">
+                                <tbody>
+                                  <tr>
+                                    <td style="width: 100%;">
+                                      <span>ama<b>zon</b>
+                                      </span>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="sbr_a" dir="ltr" style="text-align: left;">
+                            <div class="sbq_a">
+                              <table cellspacing="0" cellpadding="0" style="width: 100%;" class="sbr_m">
+                                <tbody>
+                                  <tr>
+                                    <td style="width: 100%;">
+                                      <span>ama<b>zon</b>
+                                      </span>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="sbr_a" dir="ltr" style="text-align: left;">
+                            <div class="sbq_a">
+                              <table cellspacing="0" cellpadding="0" style="width: 100%;" class="sbr_m">
+                                <tbody>
+                                  <tr>
+                                    <td style="width: 100%;">
+                                      <span>ama<b>zon books</b>
+                                      </span>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="sbr_a" dir="ltr" style="text-align: left;">
+                            <div class="sbq_a">
+                              <table cellspacing="0" cellpadding="0" style="width: 100%;" class="sbr_m">
+                                <tbody>
+                                  <tr>
+                                    <td style="width: 100%;">
+                                      <span>ama<b>zon prime</b>
+                                      </span>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

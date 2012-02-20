@@ -1,0 +1,170 @@
+body {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  margin: 0 auto;
+  width: 750px;
+}
+
+#qf {
+  display: block;
+  margin-top: 200px;
+  max-width: 500px;
+  min-width: 500px;
+  padding: 0 125px;
+  position: relative;
+  white-space: nowrap;
+}
+
+#qff {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+#qfqw {
+  border: 1px solid #D9D9D9;
+  border-top: 1px solid silver;
+  -webkit-border-radius: 1px;
+  border-radius: 1px;
+  height: 27px;
+  position: relative;
+}
+
+#qfqwb {
+  cursor: text;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+
+#qfqwb > table {
+  width: 100%;
+}
+
+.sib_a {
+  padding: 5px 6px 0;
+}
+
+#qfq {
+  background: transparent;
+  border: none;
+  height: 19px;
+  vertical-align: top;
+}
+
+.qfif {
+  font-size: 16px;
+}
+
+#qfqfi {
+  height: 24px;
+  position: relative;
+  width: 100%;
+}
+
+#qfq {
+  background: transparent;
+  border: none;
+  color: transparent;
+  left; 0px;
+  outline: none;
+  overflow: hidden;
+  padding: 0px 2px;
+  top: 1px;
+  width: 100%;
+  z-index: 5;
+}
+
+#qfqfa {
+  background: transparent;
+  color: black;
+  left: 3px;
+  padding: 0px;
+  position: absolute;
+  top: 1px;
+  white-space: pre;
+  z-index: 2;
+}
+
+#qfqfl {
+  background: black;
+  color: black;
+  height: 18px;
+  padding: 0;
+  position: absolute;
+  top: 1px;
+  white-space: pre;
+  width: 1px;
+}
+
+#qfqfb {
+  background: transparent;
+  color: silver;
+  left: 3px;
+  padding: 0px;
+  position: absolute;
+  top: 1px;
+  white-space: pre;
+}
+
+.sbr_a {
+  line-height: 22px;
+  overflow: hidden;
+  padding: 0 10px;
+  white-space: hidden;
+}
+
+.sbr_c {
+  text-align: left;
+  padding: 0 125px;
+  width: 100%;
+  z-index: 20;
+}
+
+.sbr_d {
+  border: 0;
+  border-right: 1px solid #E7E7E7;
+  border-bottom: #E7E7E7;
+  cursor: default;
+  width: 100%;
+}
+
+.sbr_e {
+  border: 1px solid #CCC;
+  border-top-color: #D9D9D9;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  -webkit-box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  width: 100%;
+}
+
+.sbr_m {
+  background: white;
+  color: black;
+  width: 100%;
+}
+
+table {
+  display: table;
+  border-collapse: separate;
+  border-color: gray;
+}
+
+table[cellspacing=0] {
+  border-spacing: 0px;
+}
+
+tbody {
+  display: table-row-group;
+  border-color: inherit;
+  vertical-align: middle;
+}
+
+tr {
+  display: table-row;
+  border-color: inherit;
+  vertical-align: inherit;
+}
+
+td {
+  display: table-cell;
+  vertical-align: inherit;
+}

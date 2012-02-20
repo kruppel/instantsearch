@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Instant Search Example</title>
+    <link rel="stylesheet" type="text/css" href="example.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../src/mustache.js"></script>
+    <script type="text/javascript" src="../src/jquery.instantsearch.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('body').instantSearch({
+          source: function (req, res) {
+            $.ajax({
+              url: 'http://developer.echonest.com/api/v4/artist/suggest',
+              dataType: 'jsonp',
+              data: {
+                results: 5,
+                api_key: 'N6E4NIOVYMTHNDM8J',
+                format: 'jsonp',
+                name: req.term
+              },
+              success: function (data) {
+                var artists = data.response.artists;
+
+                res(artists, null);
+              },
+              error: function (xhr, status, err) {
+                res(null, err);
+              }
+            });
+          }
+        });
+       });
+    </script>
+  </head>
+  <body>
+    <form id="qf" action="/search">
+      <fieldset id="qff">
+        <div id="qfqw">
+          <div id="qfqwb">
+            <table cellspacing="0" cellpadding="0">
+              <tr>
+                <td style="vertical-align: top;">
+                  <table cellspacing="0" cellpadding="0" style="width: 100%">
+                    <tbody>
+                      <tr>
+                        <td style="min-width:1px;white-space:nowrap;"></td>
+                        <td class="sib_a">
+                          <div id="qfqfi">
+                            <input id="qfq" class="qfif" name="q" type="text" autocomplete="off" dir="ltr">
+                            <div class="qfif" id="qfqfa"></div>
+                            <div class="qfif" id="qfqfl" style="display: none;"></div>
+                            <div class="qfif" id="qfqfb"></div>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+    <table cellspacing="0" cellpadding="0" class="sbr_c">
+      <tbody>
+        <tr>
+          <td style="width: 100%;">
+            <table cellspacing="0" cellpadding="0" style="width: 100%;" class="sbr_d">
+              <tbody>
+                <tr>
+                  <td>
+                    <table cellspacing="0" cellpadding="0" style="width: 100%;" class="sbr_e">
+                      <tbody>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
