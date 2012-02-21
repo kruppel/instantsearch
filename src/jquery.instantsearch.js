@@ -37,6 +37,20 @@
 
     $el.find('.sbr_c').hide();
 
+    $el.find('#qfq').focus(function () {
+      var show = true;
+
+      self.focusId = window.setInterval(function () {
+        $el.find('#qfqfl').toggle(show);
+        show = !show;
+      }, 500);
+    });
+
+    $el.find('#qfq').blur(function () {
+      $el.find('#qfqfl').hide();
+      window.clearInterval(self.focusId);
+    });
+
     $el.keydown(function (e) {
 
       switch(e.keyCode) {
@@ -71,7 +85,12 @@
           break;
 
         default:
+          var left = self.$el.find('#qfqfl').offset().left;
+
           self.doIt();
+          self.$el.find('#qfqfl').offset(function (index, coords) {
+            self.$el.find('#qfqfl').offset({ left: 3 + left + 9 });
+          });
       }
 
     });
@@ -87,7 +106,7 @@
 
       self.$el.find('#qfqfa').html(q);
 
-      if (q === "") return self.showResults();
+      if (q === '') return self.showResults();
 
       self.source({ term: q }, function (data, err) {
         if (err) throw new Error(err);
