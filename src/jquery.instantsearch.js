@@ -37,10 +37,6 @@
 
     $el.find('.sbr_c').hide();
 
-    $el.find('#qfq').blur(function () {
-      window.clearInterval(self.focusId);
-    });
-
     $el.keydown(function (e) {
 
       switch(e.keyCode) {
@@ -49,14 +45,21 @@
         case 38:
           var rows = self.$el.find('table.sbr_c .sbr_e > tbody > tr'),
               rowCount = rows.length,
-              curr = self._selected % rowCount,
-              next = (self._selected + rowCount) % rowCount;
+              curr = self._selected-- % (rowCount + 1),
+              next = (self._selected + rowCount + 1) % (rowCount + 1);
 
           self._selected = next;
           if (rowCount === 0) return;
 
-          (curr > -1) && (rows[curr].className = '');
-          rows[next].className = 'trh';
+          (curr !== 0) && (rows[curr - 1].className = '');
+          if (next === 0) {
+            self.$el.find('#qfq').val(self._val);
+            self.$el.find('#qftaf').val(self._suggested);
+          } else {
+            self.$el.find('#qfq').val(self._data[next - 1].name);
+            self.$el.find('#qftaf').val('');
+            rows[next - 1].className = 'trh';
+          }
 
           e.preventDefault();
 
@@ -64,20 +67,31 @@
 
         // right
         case 39:
+          self._val = self._data[0].name;
+          self._suggested = '';
+          self.$el.find('#qfq').val(self._val);
+          self.$el.find('#qftaf').val('');
           break;
 
         // down
         case 40:
           var rows = self.$el.find('table.sbr_c .sbr_e > tbody > tr'),
               rowCount = rows.length,
-              curr = self._selected++ % rowCount,
-              next = self._selected % rowCount;
+              curr = self._selected++ % (rowCount + 1),
+              next = self._selected % (rowCount + 1);
 
           self._selected = next;
           if (rowCount === 0) return;
 
-          (curr > -1) && (rows[curr].className = '');
-          rows[next].className = 'trh';
+          (curr !== 0) && (rows[curr - 1].className = '');
+          if (next === 0) {
+            self.$el.find('#qfq').val(self._val);
+            self.$el.find('#qftaf').val(self._suggested);
+          } else {
+            self.$el.find('#qfq').val(self._data[next - 1].name);
+            self.$el.find('#qftaf').val('');
+            rows[next - 1].className = 'trh';
+          }
 
           e.preventDefault();
 
@@ -96,7 +110,7 @@
           break;
 
         default:
-          self._selected = -1;
+          self._selected = 0;
           self.doIt();
       }
 
@@ -115,6 +129,7 @@
       self.source({ term: q }, function (data, err) {
         if (err) throw new Error(err);
 
+        self._data = data;
         self.showResults(data);
       });
     }, this.delay);
@@ -152,8 +167,10 @@
 
       if (index === 0) {
         if (options.start === '') {
+          this._suggested = value + options.rest;
           this.$el.find('#qftaf').val(value + options.rest);
         } else {
+          this._suggested = '';
           this.$el.find('#qftaf').val('');
         }
       }
