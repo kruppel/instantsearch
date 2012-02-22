@@ -1,7 +1,14 @@
-body {
+* {
   font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
   margin: 0 auto;
   width: 750px;
+}
+
+.trh {
+  background-color: rgb(238,238,238);
 }
 
 #qf {
@@ -53,6 +60,7 @@ body {
 
 .qfif {
   font-size: 16px;
+  height: 19px;
 }
 
 #qfqfi {
@@ -64,12 +72,15 @@ body {
 #qfq {
   background: transparent;
   border: none;
-  color: transparent;
-  left; 0px;
+  color: black;
+  height: 19px;
+  left: 0px;
+  margin: 0px;
   outline: none;
   overflow: hidden;
   padding: 0px 2px;
-  top: 1px;
+  position: absolute;
+  vertical-align: top;
   width: 100%;
   z-index: 5;
 }
@@ -77,6 +88,7 @@ body {
 #qfqfa {
   background: transparent;
   color: black;
+  display: none;
   left: 3px;
   padding: 0px;
   position: absolute;
@@ -88,6 +100,7 @@ body {
 #qfqfl {
   background: black;
   color: black;
+  display: none;
   height: 18px;
   padding: 0;
   position: absolute;
@@ -98,12 +111,40 @@ body {
 
 #qfqfb {
   background: transparent;
-  color: silver;
-  left: 3px;
+  color: white;
   padding: 0px;
   position: absolute;
   top: 1px;
+  visibility: hidden;
   white-space: pre;
+  z-index: 1;
+}
+
+#qftaf {
+  background-color: transparent;
+  border: none;
+  color: silver;
+  margin: 0px;
+  padding: 0px 2px;
+  position: absolute;
+  -webkit-text-fill-color: silver;
+  text-align: left;
+  width: 100%;
+  z-index: 0;
+}
+
+#qftif {
+  background-color: transparent;
+  border: none;
+  color: silver;
+  margin: 0px;
+  padding: 0px 2px;
+  position: absolute;
+  -webkit-text-fill-color: silver;
+  text-align: left;
+  visibility: hidden;
+  width: 100%;
+  z-index: 0;
 }
 
 .sbr_a {
@@ -137,7 +178,7 @@ body {
 }
 
 .sbr_m {
-  background: white;
+  background: transparent;
   color: black;
   width: 100%;
 }

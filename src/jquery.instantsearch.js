@@ -37,17 +37,7 @@
 
     $el.find('.sbr_c').hide();
 
-    $el.find('#qfq').focus(function () {
-      var show = true;
-
-      self.focusId = window.setInterval(function () {
-        $el.find('#qfqfl').toggle(show);
-        show = !show;
-      }, 500);
-    });
-
     $el.find('#qfq').blur(function () {
-      $el.find('#qfqfl').hide();
       window.clearInterval(self.focusId);
     });
 
@@ -55,13 +45,21 @@
 
       switch(e.keyCode) {
 
-        // left
-        case 37:
-          break;
-
         // up
         case 38:
+          var rows = self.$el.find('table.sbr_c .sbr_e > tbody > tr'),
+              rowCount = rows.length,
+              curr = self._selected % rowCount,
+              next = (self._selected + rowCount) % rowCount;
+
+          self._selected = next;
+          if (rowCount === 0) return;
+
+          (curr > -1) && (rows[curr].className = '');
+          rows[next].className = 'trh';
+
           e.preventDefault();
+
           break;
 
         // right
@@ -70,7 +68,20 @@
 
         // down
         case 40:
+          var rows = self.$el.find('table.sbr_c .sbr_e > tbody > tr'),
+              rowCount = rows.length,
+              curr = self._selected++ % rowCount,
+              next = self._selected % rowCount;
+
+          self._selected = next;
+          if (rowCount === 0) return;
+
+          (curr > -1) && (rows[curr].className = '');
+          rows[next].className = 'trh';
+
           e.preventDefault();
+
+          break;
 
         // tab
         case 9:
@@ -85,12 +96,8 @@
           break;
 
         default:
-          var left = self.$el.find('#qfqfl').offset().left;
-
+          self._selected = -1;
           self.doIt();
-          self.$el.find('#qfqfl').offset(function (index, coords) {
-            self.$el.find('#qfqfl').offset({ left: 3 + left + 9 });
-          });
       }
 
     });
@@ -101,10 +108,7 @@
     var self = this;
 
     setTimeout(function () {
-      var input = self.$el.find('#qfq'),
-          q = input.val();
-
-      self.$el.find('#qfqfa').html(q);
+      var q = self._val = self.$el.find('#qfq').val();
 
       if (q === '') return self.showResults();
 
@@ -124,9 +128,9 @@
 
     rs.empty();
 
-    if (input.val() === '') {
+    if (input.val() === '' || !data) {
+      this.$el.find('#qftaf').val('');
       table.hide();
-      this.$el.find('#qfqfb').html('');
 
       return;
     }
@@ -148,9 +152,9 @@
 
       if (index === 0) {
         if (options.start === '') {
-          this.$el.find('#qfqfb').html(value + options.rest);
+          this.$el.find('#qftaf').val(value + options.rest);
         } else {
-          this.$el.find('#qfqfb').html('');
+          this.$el.find('#qftaf').val('');
         }
       }
 
