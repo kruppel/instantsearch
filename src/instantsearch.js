@@ -1,14 +1,26 @@
-!function () {
+/*!
+  * instantsearch: GOOGish autocomplete © Kurt Ruppel 2012
+  *
+  * https://github.com/kruppel/instantsearch
+  * LICENSE: MIT
+  */
 
-  $.fn.instantSearch = function (options) {
-    var opts = $.extend({}, $.fn.instantSearch.defaults, options)
+var lib = $ === jQuery ? jQuery : ender
 
-    return this.each(function () {
-      var $this = $(this)
+!function ($) {
 
-      $this.data('mofo', new $.Motherfucker($this, opts))
-    })
-  }
+  var instantSearch = function (options) {
+        var opts = $.extend({}, options)
+
+        return this.each(function () {
+          var $this = $(this)
+
+          $this.data('mofo', new $.Motherfucker($this, opts))
+        })
+      }
+    , fn = $ === jQuery ? $.fn : $.ender
+
+  fn['instantSearch'] = instantSearch
 
   $.Motherfucker = function ($el, options) {
     var self = this
@@ -138,4 +150,4 @@
 
   }
 
-}()
+}(lib)

@@ -13,7 +13,6 @@
   , "url": "https://github.com/kruppel/instantsearch/raw/master/LICENSE"
   }]
 , "devDependencies": {
-    "sink-test": ">= 1.0.1"
   , "smoosh": "*"
   }
 }
