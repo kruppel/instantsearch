@@ -15,14 +15,14 @@ var lib = $ === jQuery ? jQuery : ender
         return this.each(function () {
           var $this = $(this)
 
-          $this.data('mofo', new $.Motherfucker($this, opts))
+          $this.data('mofo', new $.InstantSearch($this, opts))
         })
       }
     , fn = $ === jQuery ? $.fn : $.ender
 
   fn['instantSearch'] = instantSearch
 
-  $.Motherfucker = function ($el, options) {
+  $.InstantSearch = function ($el, options) {
     var self = this
 
     this.src = options.source
@@ -34,9 +34,23 @@ var lib = $ === jQuery ? jQuery : ender
     this.$ghost = $el.find('#qftaf')
     this._sel = 0
 
+    $el.on('click', function (e) {
+      self.$input.focus()
+    })
+
     $el.on('keydown', function (e) {
 
       switch(e.keyCode) {
+
+        // tab
+        case 9:
+        // return
+        case 13:
+        // escape
+        case 27:
+        // left
+        case 37:
+          break
 
         // up
         case 38:
@@ -46,6 +60,8 @@ var lib = $ === jQuery ? jQuery : ender
 
         // right
         case 39:
+          if (self.getCaretPosition() < self.$input.val().length) return
+
           self._val = self._data[0].name
           self._rel = ''
           self.$input.val(self._val)
@@ -58,35 +74,27 @@ var lib = $ === jQuery ? jQuery : ender
           e.preventDefault()
           break
 
-        // tab
-        case 9:
-          break
-
-        // return
-        case 13:
-          break
-
-        // escape
-        case 27:
-          break
-
         default:
-          self._sel = 0
-          self.doIt()
+          self.update()
       }
 
     })
 
   }
 
-  $.Motherfucker.prototype = {
+  $.InstantSearch.prototype = {
 
-    doIt: function () {
+    update: function () {
       var self = this
 
+      this._sel = 0
       this._tid && clearTimeout(this._tid)
       this._tid = setTimeout(function () {
-        var q = self._val = self.$input.val()
+        var val = self.$input.val()
+          , q = self._val = val
+          , match = self._rel && self._rel.match(val)
+
+        !match && self.$ghost.val('')
 
         if (q === '') return self.showResults()
 
@@ -109,7 +117,7 @@ var lib = $ === jQuery ? jQuery : ender
 
       tb.empty()
 
-      if (val === '' || !data) return ghost.val('') && res.hide() && false
+      if (val === '' || !data || !len) return ghost.val('') && res.hide() && false
 
       for (i = 0; i < len; i++) {
         var result = data[i].name
@@ -119,9 +127,9 @@ var lib = $ === jQuery ? jQuery : ender
           , match = matchset[1] || ''
           , rest =  matchset[2] || ''
           , content = '<tr><td class="sbr_a" dir="ltr" style="text-align: left;"><div class="sbq_a"><table cellspacing="0" cellpadding="0" style="width: 100%;" class="sbr_m"><tbody><tr><td style="width: 100%;">'
-          , guess = (start !== '') ? start : val + rest
+          , guess = (start !== '') ? '' : val + rest
 
-        i === 0 && (this._rel = guess) && ghost.val(guess)
+        i === 0 && ghost.val(guess) && (this._rel = guess)
         content += '<span><b>' + start + '</b>' + match + '<b>' + rest + '</b></span></td></tr></tbody></table></div></td></tr>'
         tb.append(content)
       }
@@ -146,6 +154,22 @@ var lib = $ === jQuery ? jQuery : ender
 
       if (next === 0) this.$input.val(this._val) && this.$ghost.val(this._rel)
       else rows[ri].className = this.$input.val(this._data[next - 1].name) && this.$ghost.val('') ? 'trh' : ''
+    }
+
+  , getCaretPosition: function () {
+      var input = this.$input[0]
+        , pos
+
+      if (input.selectionEnd === undefined) {
+        this.$input.focus();
+        sel = document.selection.createRange()
+        sel.moveStart('character', -this.$input.val().length)
+        pos = sel.text.length
+      } else {
+        pos = input.selectionEnd
+      }
+
+      return pos
     }
 
   }
