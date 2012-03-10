@@ -90,6 +90,7 @@ var lib = $ === jQuery ? jQuery : ender
       this._sel = 0
       this._tid && clearTimeout(this._tid)
       this._tid = setTimeout(function () {
+        // XXX - Break out into separate function?
         var val = self.$input.val()
           , q = self._val = val
           , match = self._rel && self._rel.match(val)
@@ -113,6 +114,7 @@ var lib = $ === jQuery ? jQuery : ender
         , ghost = this.$ghost
         , val = this.$input.val()
         , len = data && data.length
+        , body = ""
         , i
 
       tb.empty()
@@ -127,13 +129,14 @@ var lib = $ === jQuery ? jQuery : ender
           , match = matchset[1] || ''
           , rest =  matchset[2] || ''
           , content = '<tr><td class="sbr_a" dir="ltr" style="text-align: left;"><div class="sbq_a"><table cellspacing="0" cellpadding="0" style="width: 100%;" class="sbr_m"><tbody><tr><td style="width: 100%;">'
-          , guess = (start !== '') ? '' : val + rest
+          , guess = (start === '') ? val + rest : ''
 
         i === 0 && ghost.val(guess) && (this._rel = guess)
         content += '<span><b>' + start + '</b>' + match + '<b>' + rest + '</b></span></td></tr></tbody></table></div></td></tr>'
-        tb.append(content)
+        body += content
       }
 
+      tb.append(body)
       res.is(':hidden') && res.show()
       return true
     }
