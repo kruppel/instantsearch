@@ -15,14 +15,14 @@ var lib = $ === jQuery ? jQuery : ender
         return this.each(function () {
           var $this = $(this)
 
-          $this.data('mofo', new $.Motherfucker($this, opts))
+          $this.data('instantsearch', new $.InstantSearch($this, opts))
         })
       }
     , fn = $ === jQuery ? $.fn : $.ender
 
   fn['instantSearch'] = instantSearch
 
-  $.Motherfucker = function ($el, options) {
+  $.InstantSearch = function ($el, options) {
     var self = this
 
     this.src = options.source
@@ -79,7 +79,7 @@ var lib = $ === jQuery ? jQuery : ender
 
   }
 
-  $.Motherfucker.prototype = {
+  $.InstantSearch.prototype = {
 
     doIt: function () {
       var self = this
