@@ -15,14 +15,14 @@ var lib = $ === jQuery ? jQuery : ender
         return this.each(function () {
           var $this = $(this)
 
-          $this.data('mofo', new $.Motherfucker($this, opts))
+          $this.data('instantsearch', new $.InstantSearch($this, opts))
         })
       }
     , fn = $ === jQuery ? $.fn : $.ender
 
   fn['instantSearch'] = instantSearch
 
-  $.Motherfucker = function ($el, options) {
+  $.InstantSearch = function ($el, options) {
     var self = this
 
     this.src = options.source
@@ -79,7 +79,9 @@ var lib = $ === jQuery ? jQuery : ender
 
   }
 
-  $.Motherfucker.prototype = {
+  $.InstantSearch.prototype = {
+
+    _rel: '',
 
     doIt: function () {
       var self = this
@@ -89,6 +91,11 @@ var lib = $ === jQuery ? jQuery : ender
         var q = self._val = self.$input.val()
 
         if (q === '') return self.showResults()
+
+        // Hide ghost if we no longer match it
+        if (q.toLowerCase() !== self._rel.slice(0, q.length).toLowerCase()) {
+          self.$ghost.val('');
+        }
 
         self.src({ term: q }, function (data, err) {
           if (err) throw new Error(err)
@@ -119,7 +126,7 @@ var lib = $ === jQuery ? jQuery : ender
           , match = matchset[1] || ''
           , rest =  matchset[2] || ''
           , content = '<tr><td class="sbr_a" dir="ltr" style="text-align: left;"><div class="sbq_a"><table cellspacing="0" cellpadding="0" style="width: 100%;" class="sbr_m"><tbody><tr><td style="width: 100%;">'
-          , guess = (start !== '') ? start : val + rest
+          , guess = (start === '') ? val + rest : '';
 
         i === 0 && (this._rel = guess) && ghost.val(guess)
         content += '<span><b>' + start + '</b>' + match + '<b>' + rest + '</b></span></td></tr></tbody></table></div></td></tr>'
