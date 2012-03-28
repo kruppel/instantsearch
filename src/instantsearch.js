@@ -159,7 +159,7 @@ var lib = $ === jQuery ? jQuery : ender
 
       tb.empty()
 
-      if (val === '' || !data) return ghost.val('') && res.hide() && false
+      if (val === '' || !data || data.length === 0) return ghost.val('') && res.hide() && false
 
       for (i = 0; i < len; i++) {
         var result = data[i].name
