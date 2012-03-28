@@ -182,6 +182,8 @@ var lib = $ === jQuery ? jQuery : ender
 
       if (val === '' || !data || data.length === 0) return ghost.val('') && res.hide() && false
 
+      $('body').on('keydown', $.proxy(this._bodyKeydown, this))
+
       for (i = 0; i < len; i++) {
         var result = data[i].name
           , regex = new RegExp('(' + val + ')(.*)', 'i')
@@ -229,6 +231,8 @@ var lib = $ === jQuery ? jQuery : ender
     }
 
   , reset: function () {
+    $('body').off('keydown', this._bodyKeydown)
+
     this.$res.hide()
     this.$ghost.val('')
   }
@@ -244,6 +248,11 @@ var lib = $ === jQuery ? jQuery : ender
       return false
     }
   }
+
+  , _bodyKeydown: function (e) {
+      // escape
+      if (e.keyCode === 27) this.reset()
+    }
 
   }
 
