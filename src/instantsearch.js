@@ -118,6 +118,27 @@ var lib = $ === jQuery ? jQuery : ender
 
     })
 
+    function getIndex (element) {
+      var rows = self.$resList.find('.sbr_a tr')
+        , row = $(element).parent('tr')
+        , idx = rows.index(row)
+
+      return idx
+    }
+
+    this.$resList.on('mouseenter', '.sbr_a tr', function (e) {
+      self.navigateTo(getIndex(e.target))
+    })
+
+    this.$resList.on('mouseleave', function (e) {
+      self.navigateTo(-1)
+    })
+
+    this.$resList.on('click', function (e) {
+      self.search()
+      self.$input.focus()
+    })
+
   }
 
   $.InstantSearch.prototype = {
@@ -188,6 +209,12 @@ var lib = $ === jQuery ? jQuery : ender
       var sel = this._sel + dir
       if (sel < -1) sel += (rows.length + 1)
       if (sel >= rows.length) sel -= (rows.length + 1)
+
+      this.navigateTo(sel);
+    }
+
+  , navigateTo: function (sel) {
+      var rows = this.$resList.find('.sbr_a tr')
 
       rows.removeClass('trh');
       $(rows[sel]).addClass('trh');
