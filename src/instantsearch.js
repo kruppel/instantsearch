@@ -27,12 +27,22 @@ var lib = $ === jQuery ? jQuery : ender
 
     this.src = options.source
     this.$el = $el
-    this.$res = $('<table cellspacing="0" cellpadding="0" class="sbr_c" style="display:none;"><tbody><tr><td style="width:100%;"><table cellspacing="0" cellpadding="0" style="width:100%;" class="sbr_d"><tbody><tr><td><table cellspacing="0" cellpadding="0" style="width:100%;" class="sbr_e"><tbody></tbody></table></td></tr></tbody></table></td></tr></tbody></table>')
-    $('body').append(this.$res)
-    $el.append('<div id="qfqw"><div id="qfqwb"><table cellspacing="0" cellpadding="0"><tr><td style="vertical-align:top;"><table cellspacing="0" cellpadding="0" style="width:100%"><tbody><tr><td style="min-width:1px;white-space:nowrap;"></td><td class="sib_a"><div id="qfqfi"><input id="qfq" class="qfif" name="q" type="text" autocomplete="off" spellcheck="false" dir="ltr"><div class="qfif" id="qfqfa"></div><div class="qfif" id="qfqfl"></div><div class="qfif" id="qfqfb"></div><input class="qfif" id="qftaf" disabled autocomplete="off"><input class="qfif" id="qftif" disabled autocomplete="off"></div></td></tr></tbody></table></td></tr></table></div></div>')
-    this.$input = $el.find('#qfq')
-    this.$ghost = $el.find('#qftaf')
-    this._sel = 0
+
+    $el.append('<div id="qfqw"><div id="qfqwb"><table cellspacing="0" cellpadding="0"><tr><td style="vertical-align:top;"><table cellspacing="0" cellpadding="0" style="width:100%"><tbody><tr><td style="min-width:1px;white-space:nowrap;"></td><td class="sib_a"><div id="qfqfi"><input class="qfif input" name="q" type="text" autocomplete="off" spellcheck="false" dir="ltr"><input class="qfif ghost" disabled autocomplete="off"></div></td></tr></tbody></table></td></tr></table></div></div>')
+
+    this.$res = $('<table cellspacing="0" cellpadding="0" class="sbr_c" style="display:none;"><tbody><tr><td style="width:100%;"><table cellspacing="0" cellpadding="0" style="width:100%;" class="sbr_d"><tbody><tr><td></td></tr></tbody></table></td></tr></tbody></table>')
+                  .css({
+                    position: 'absolute',
+                    top:      $el.offset().top + $el.height(),
+                    left:     $el.offset().left,
+                    width:    $el.width()
+                  })
+                  .appendTo('body')
+
+    this.$resList = $('<table cellspacing="0" cellpadding="0" style="width:100%;" class="sbr_e"><tbody></tbody></table>').appendTo(this.$res.find('.sbr_d td'))
+
+    this.$input = $el.find('.input')
+    this.$ghost = $el.find('.ghost')
 
     $el.on('keydown', function (e) {
 
