@@ -7,11 +7,7 @@ body {
   width: 750px;
 }
 
-.trh {
-  background-color: rgb(238,238,238);
-}
-
-#qf {
+#form {
   display: block;
   margin-top: 200px;
   max-width: 500px;
@@ -21,48 +17,22 @@ body {
   white-space: nowrap;
 }
 
-#qff {
-  border: none;
-  margin: 0;
-  padding: 0;
-}
-
-#qfqw {
+.instant-search-field {
   border: 1px solid #D9D9D9;
   border-top: 1px solid silver;
   -webkit-border-radius: 1px;
   border-radius: 1px;
   height: 27px;
   position: relative;
+  padding: 5px 6px 0
 }
 
-#qfqwb {
-  cursor: text;
-  left: 0;
-  position: absolute;
-  right: 0;
-}
-
-#qfqwb > table {
-  width: 100%;
-}
-
-.sib_a {
-  padding: 5px 6px 0;
-}
-
-.qfif {
+.instant-search-field input {
   font-size: 16px;
   height: 19px;
 }
 
-#qfqfi {
-  height: 24px;
-  position: relative;
-  width: 100%;
-}
-
-.input {
+.instant-search-field input.input {
   background: transparent;
   border: none;
   color: black;
@@ -78,7 +48,7 @@ body {
   z-index: 5;
 }
 
-.ghost {
+.instant-search-field input.ghost {
   background-color: transparent;
   border: none;
   color: silver;
@@ -89,23 +59,14 @@ body {
   text-align: left;
   width: 100%;
   z-index: 0;
+  left: 0px;
 }
 
-.sbr_a {
-  line-height: 22px;
-  overflow: hidden;
-  padding: 0 10px;
-  white-space: hidden;
-}
-
-.sbr_c {
+.instant-search-results {
   background-color: white;
   text-align: left;
   width: 100%;
   z-index: 20;
-}
-
-.sbr_d {
   border: 0;
   border-right: 1px solid #E7E7E7;
   border-bottom: #E7E7E7;
@@ -113,7 +74,10 @@ body {
   width: 100%;
 }
 
-.sbr_e {
+.instant-search-results ul.list {
+  display: block;
+  margin: 0;
+  padding: 0;
   border: 1px solid #CCC;
   border-top-color: #D9D9D9;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -121,35 +85,15 @@ body {
   width: 100%;
 }
 
-.sbr_m {
-  background: transparent;
-  color: black;
-  width: 100%;
+.instant-search-results ul.list li {
+  line-height: 22px;
+  overflow: hidden;
+  padding: 0 10px;
+  white-space: hidden;
+  display: block;
+  list-style: none;
 }
 
-table {
-  display: table;
-  border-collapse: separate;
-  border-color: gray;
-}
-
-table[cellspacing=0] {
-  border-spacing: 0px;
-}
-
-tbody {
-  display: table-row-group;
-  border-color: inherit;
-  vertical-align: middle;
-}
-
-tr {
-  display: table-row;
-  border-color: inherit;
-  vertical-align: inherit;
-}
-
-td {
-  display: table-cell;
-  vertical-align: inherit;
+.instant-search-results ul.list li.highlight {
+  background-color: rgb(238,238,238);
 }

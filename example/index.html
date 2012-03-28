@@ -7,7 +7,7 @@
     <script type="text/javascript" src="../src/instantsearch.js"></script>
     <script type="text/javascript">
       $(document).ready(function () {
-        $('#qff').instantSearch({
+        $('#qf').instantSearch({
           source: function (req, res) {
             $.ajax({
               url: 'http://developer.echonest.com/api/v4/artist/suggest',
@@ -33,9 +33,8 @@
     </script>
   </head>
   <body>
-    <form id="qf" action="#search">
-      <fieldset id="qff">
-      </fieldset>
+    <form id="form" action="#search">
+      <input name="q" id="qf">
 
       <button>OK</button>
     </form>

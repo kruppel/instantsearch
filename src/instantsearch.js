@@ -24,27 +24,33 @@ var lib = $ === jQuery ? jQuery : ender
 
   $.InstantSearch = function ($el, options) {
     var self = this
+      , id   = $el.attr('id')
+      , name = $el.attr('name')
 
     this.src = options.source
-    this.$el = $el
 
-    $el.append('<div id="qfqw"><div id="qfqwb"><table cellspacing="0" cellpadding="0"><tr><td style="vertical-align:top;"><table cellspacing="0" cellpadding="0" style="width:100%"><tbody><tr><td style="min-width:1px;white-space:nowrap;"></td><td class="sib_a"><div id="qfqfi"><input class="qfif input" name="q" type="text" autocomplete="off" spellcheck="false" dir="ltr"><input class="qfif ghost" disabled autocomplete="off"></div></td></tr></tbody></table></td></tr></table></div></div>')
+    this.$el = $('<div class="instant-search-field">'+
+                   '<input class="input" type="text" autocomplete="off" spellcheck="false" dir="ltr">'+
+                   '<input class="ghost" disabled autocomplete="off">'+
+                 '</div>')
+    $el.replaceWith(this.$el)
 
-    this.$res = $('<table cellspacing="0" cellpadding="0" class="sbr_c" style="display:none;"><tbody><tr><td style="width:100%;"><table cellspacing="0" cellpadding="0" style="width:100%;" class="sbr_d"><tbody><tr><td></td></tr></tbody></table></td></tr></tbody></table>')
+    this.$res = $('<div class="instant-search-results"><ul class="list"></ul></div>')
                   .css({
                     position: 'absolute',
-                    top:      $el.offset().top + $el.height(),
-                    left:     $el.offset().left,
-                    width:    $el.width()
+                    top:      this.$el.offset().top + this.$el.height(),
+                    left:     this.$el.offset().left,
+                    width:    this.$el.width()
                   })
+                  .hide()
                   .appendTo('body')
 
-    this.$resList = $('<table cellspacing="0" cellpadding="0" style="width:100%;" class="sbr_e"><tbody></tbody></table>').appendTo(this.$res.find('.sbr_d td'))
+    this.$input = this.$el.find('.input')
+    this.$input.attr({ id: id, name: name })
 
-    this.$input = $el.find('.input')
-    this.$ghost = $el.find('.ghost')
+    this.$ghost = this.$el.find('.ghost')
 
-    $el.on('keydown', function (e) {
+    this.$el.on('keydown', function (e) {
 
       switch(e.keyCode) {
 
@@ -118,23 +124,17 @@ var lib = $ === jQuery ? jQuery : ender
 
     })
 
-    function getIndex (element) {
-      var rows = self.$resList.find('.sbr_a tr')
-        , row = $(element).parent('tr')
-        , idx = rows.index(row)
-
-      return idx
-    }
-
-    this.$resList.on('mouseenter', '.sbr_a tr', function (e) {
-      self.navigateTo(getIndex(e.target))
+    this.$res.on('mouseenter', 'ul.list li', function (e) {
+      var items = self.$res.find('ul.list li')
+        , idx   = items.index(this)
+      self.navigateTo(idx)
     })
 
-    this.$resList.on('mouseleave', function (e) {
+    this.$res.on('mouseleave', function (e) {
       self.navigateTo(-1)
     })
 
-    this.$resList.on('click', function (e) {
+    this.$res.on('click', function (e) {
       self.complete()
       self.reset()
     })
@@ -172,13 +172,13 @@ var lib = $ === jQuery ? jQuery : ender
 
   , showResults: function (data) {
       var res = this.$res
-        , tb = res.find('.sbr_e > tbody')
+        , list = res.find('ul.list')
         , ghost = this.$ghost
         , val = this.$input.val()
         , len = data && data.length
         , i
 
-      tb.empty()
+      list.empty()
 
       if (val === '' || !data || data.length === 0) return ghost.val('') && res.hide() && false
 
@@ -191,12 +191,14 @@ var lib = $ === jQuery ? jQuery : ender
           , start = result.substr(0, matchset.index)
           , match = matchset[1] || ''
           , rest =  matchset[2] || ''
-          , content = '<tr><td class="sbr_a" dir="ltr" style="text-align: left;"><div class="sbq_a"><table cellspacing="0" cellpadding="0" style="width: 100%;" class="sbr_m"><tbody><tr><td style="width: 100%;">'
           , guess = (start === '' && rest !== '') ? val + rest : ''
+          , content
 
         i === 0 && (this._rel = guess) && ghost.val(guess)
-        content += '<span><b>' + start + '</b>' + match + '<b>' + rest + '</b></span></td></tr></tbody></table></div></td></tr>'
-        tb.append(content)
+
+        content = '<li><strong>' + start + '</strong>' + match + '<strong>' + rest + '</strong></li>'
+
+        list.append(content)
       }
 
       res.is(':hidden') && res.show()
@@ -204,22 +206,22 @@ var lib = $ === jQuery ? jQuery : ender
     }
 
   , navigate: function (dir) {
-      var rows = this.$resList.find('.sbr_a tr')
+      var items = this.$res.find('ul.list li')
 
-      if (rows.length === 0) return
+      if (items.length === 0) return
 
       var sel = this._sel + dir
-      if (sel < -1) sel += (rows.length + 1)
-      if (sel >= rows.length) sel -= (rows.length + 1)
+      if (sel < -1) sel += (items.length + 1)
+      if (sel >= items.length) sel -= (items.length + 1)
 
       this.navigateTo(sel);
     }
 
   , navigateTo: function (sel) {
-      var rows = this.$resList.find('.sbr_a tr')
+      var items = this.$res.find('ul.list li')
 
-      rows.removeClass('trh');
-      $(rows[sel]).addClass('trh');
+      items.removeClass('highlight');
+      $(items[sel]).addClass('highlight');
 
       if (sel === -1) {
         this.$input.val(this._val) && this.$ghost.val(this._rel)
