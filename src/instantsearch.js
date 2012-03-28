@@ -56,10 +56,7 @@ var lib = $ === jQuery ? jQuery : ender
 
         // right
         case 39:
-          self._val = self._data[0].name
-          self._rel = ''
-          self.$input.val(self._val)
-          self.$ghost.val('')
+          self.complete();
           break
 
         // down
@@ -70,19 +67,21 @@ var lib = $ === jQuery ? jQuery : ender
 
         // tab
         case 9:
+          if (self.complete()) {
+            self.search();
+            e.preventDefault();
+          }
           break
 
         // return
         case 13:
-          break
-
         // escape
         case 27:
+          self.reset();
           break
 
         default:
-          self._sel = 0
-          self.doIt()
+          self.search()
       }
 
     })
@@ -95,7 +94,7 @@ var lib = $ === jQuery ? jQuery : ender
 
   , _sel: -1
 
-    doIt: function () {
+  , search: function () {
       var self = this
 
       this._tid && clearTimeout(this._tid)
@@ -169,11 +168,22 @@ var lib = $ === jQuery ? jQuery : ender
       this._sel = sel
     }
 
-      curr !== 0 && (rows[curr - 1].className = '')
+  , reset: function () {
+    this.$res.hide()
+    this.$ghost.val('')
+  }
 
-      if (next === 0) this.$input.val(this._val) && this.$ghost.val(this._rel)
-      else rows[ri].className = this.$input.val(this._data[next - 1].name) && this.$ghost.val('') ? 'trh' : ''
+  , complete: function () {
+    if (this.$ghost.val()) {
+      this._val = this._data[0].name
+      this._rel = ''
+      this.$input.val(this._val)
+      this.$ghost.val('')
+      return true
+    } else {
+      return false
     }
+  }
 
   }
 
