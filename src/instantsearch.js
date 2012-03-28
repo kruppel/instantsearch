@@ -37,12 +37,6 @@ var lib = $ === jQuery ? jQuery : ender
     $el.replaceWith(this.$el)
 
     this.$res = $('<div class="instant-search-results"><ul class="list"></ul></div>')
-                  .css({
-                    position: 'absolute',
-                    top:      this.$el.offset().top + this.$el.outerHeight(),
-                    left:     this.$el.offset().left,
-                    width:    this.$el.outerWidth()
-                  })
                   .hide()
                   .appendTo('body')
 
@@ -203,7 +197,15 @@ var lib = $ === jQuery ? jQuery : ender
         list.append(content)
       }
 
-      res.is(':hidden') && res.show()
+      if (res.is(':hidden')) {
+        res.css({
+              position: 'absolute',
+              top:      this.$el.offset().top + this.$el.outerHeight(),
+              left:     this.$el.offset().left,
+              width:    this.$el.outerWidth()
+            })
+            .show()
+      }
       return true
     }
 
