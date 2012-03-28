@@ -51,13 +51,6 @@ body {
   padding: 5px 6px 0;
 }
 
-#qfq {
-  background: transparent;
-  border: none;
-  height: 19px;
-  vertical-align: top;
-}
-
 .qfif {
   font-size: 16px;
   height: 19px;
@@ -69,7 +62,7 @@ body {
   width: 100%;
 }
 
-#qfq {
+.input {
   background: transparent;
   border: none;
   color: black;
@@ -85,42 +78,7 @@ body {
   z-index: 5;
 }
 
-#qfqfa {
-  background: transparent;
-  color: black;
-  display: none;
-  left: 3px;
-  padding: 0px;
-  position: absolute;
-  top: 1px;
-  white-space: pre;
-  z-index: 2;
-}
-
-#qfqfl {
-  background: black;
-  color: black;
-  display: none;
-  height: 18px;
-  padding: 0;
-  position: absolute;
-  top: 1px;
-  white-space: pre;
-  width: 1px;
-}
-
-#qfqfb {
-  background: transparent;
-  color: white;
-  padding: 0px;
-  position: absolute;
-  top: 1px;
-  visibility: hidden;
-  white-space: pre;
-  z-index: 1;
-}
-
-#qftaf {
+.ghost {
   background-color: transparent;
   border: none;
   color: silver;
@@ -129,20 +87,6 @@ body {
   position: absolute;
   -webkit-text-fill-color: silver;
   text-align: left;
-  width: 100%;
-  z-index: 0;
-}
-
-#qftif {
-  background-color: transparent;
-  border: none;
-  color: silver;
-  margin: 0px;
-  padding: 0px 2px;
-  position: absolute;
-  -webkit-text-fill-color: silver;
-  text-align: left;
-  visibility: hidden;
   width: 100%;
   z-index: 0;
 }
@@ -155,8 +99,8 @@ body {
 }
 
 .sbr_c {
+  background-color: white;
   text-align: left;
-  padding: 0 125px;
   width: 100%;
   z-index: 20;
 }

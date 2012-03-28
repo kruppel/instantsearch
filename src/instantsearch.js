@@ -27,52 +27,93 @@ var lib = $ === jQuery ? jQuery : ender
 
     this.src = options.source
     this.$el = $el
-    this.$res = $('<table cellspacing="0" cellpadding="0" class="sbr_c" style="display:none;"><tbody><tr><td style="width:100%;"><table cellspacing="0" cellpadding="0" style="width:100%;" class="sbr_d"><tbody><tr><td><table cellspacing="0" cellpadding="0" style="width:100%;" class="sbr_e"><tbody></tbody></table></td></tr></tbody></table></td></tr></tbody></table>')
-    $('body').append(this.$res)
-    $el.append('<div id="qfqw"><div id="qfqwb"><table cellspacing="0" cellpadding="0"><tr><td style="vertical-align:top;"><table cellspacing="0" cellpadding="0" style="width:100%"><tbody><tr><td style="min-width:1px;white-space:nowrap;"></td><td class="sib_a"><div id="qfqfi"><input id="qfq" class="qfif" name="q" type="text" autocomplete="off" spellcheck="false" dir="ltr"><div class="qfif" id="qfqfa"></div><div class="qfif" id="qfqfl"></div><div class="qfif" id="qfqfb"></div><input class="qfif" id="qftaf" disabled autocomplete="off"><input class="qfif" id="qftif" disabled autocomplete="off"></div></td></tr></tbody></table></td></tr></table></div></div>')
-    this.$input = $el.find('#qfq')
-    this.$ghost = $el.find('#qftaf')
-    this._sel = 0
+
+    $el.append('<div id="qfqw"><div id="qfqwb"><table cellspacing="0" cellpadding="0"><tr><td style="vertical-align:top;"><table cellspacing="0" cellpadding="0" style="width:100%"><tbody><tr><td style="min-width:1px;white-space:nowrap;"></td><td class="sib_a"><div id="qfqfi"><input class="qfif input" name="q" type="text" autocomplete="off" spellcheck="false" dir="ltr"><input class="qfif ghost" disabled autocomplete="off"></div></td></tr></tbody></table></td></tr></table></div></div>')
+
+    this.$res = $('<table cellspacing="0" cellpadding="0" class="sbr_c" style="display:none;"><tbody><tr><td style="width:100%;"><table cellspacing="0" cellpadding="0" style="width:100%;" class="sbr_d"><tbody><tr><td></td></tr></tbody></table></td></tr></tbody></table>')
+                  .css({
+                    position: 'absolute',
+                    top:      $el.offset().top + $el.height(),
+                    left:     $el.offset().left,
+                    width:    $el.width()
+                  })
+                  .appendTo('body')
+
+    this.$resList = $('<table cellspacing="0" cellpadding="0" style="width:100%;" class="sbr_e"><tbody></tbody></table>').appendTo(this.$res.find('.sbr_d td'))
+
+    this.$input = $el.find('.input')
+    this.$ghost = $el.find('.ghost')
 
     $el.on('keydown', function (e) {
 
       switch(e.keyCode) {
 
+        // left
+        case 37:
+          break
+
         // up
         case 38:
-          self.navigate(1)
+          self.navigate(-1)
           e.preventDefault()
           break
 
         // right
         case 39:
-          self._val = self._data[0].name
-          self._rel = ''
-          self.$input.val(self._val)
-          self.$ghost.val('')
+          self.complete();
           break
 
         // down
         case 40:
-          self.navigate(-1)
+          self.navigate(1)
           e.preventDefault()
           break
 
         // tab
         case 9:
+          if (self.complete()) {
+            self.search();
+            e.preventDefault();
+          }
           break
 
         // return
         case 13:
-          break
-
         // escape
         case 27:
+          self.reset();
+          break
+
+        // shift
+        case 16:
+        // ctrl
+        case 17:
+        // alt
+        case 18:
+        // pause/break
+        case 19:
+        // caps lock
+        case 20:
+        // page up
+        case 33:
+        // page down
+        case 34:
+        // end
+        case 35:
+        // home
+        case 36:
+        // insert
+        case 45:
+        // window key / cmd
+        case 91:
+        case 92:
+        // select
+        case 93:
+          // TODO: We might want f-keys here too
           break
 
         default:
-          self._sel = 0
-          self.doIt()
+          self.search()
       }
 
     })
@@ -81,9 +122,11 @@ var lib = $ === jQuery ? jQuery : ender
 
   $.InstantSearch.prototype = {
 
-    _rel: '',
+    _rel: ''
 
-    doIt: function () {
+  , _sel: -1
+
+  , search: function () {
       var self = this
 
       this._tid && clearTimeout(this._tid)
@@ -138,22 +181,41 @@ var lib = $ === jQuery ? jQuery : ender
     }
 
   , navigate: function (dir) {
-      var rows = this.$res.find('.sbr_e > tbody > tr')
-        , i = rows.length + 1
-        , sel, curr, next, ri
+      var rows = this.$resList.find('.sbr_a tr')
 
-      if (i === 0) return
+      if (rows.length === 0) return
 
-      sel = this._sel
-      curr = sel % i
-      next = this._sel = (sel + i - dir) % i
-      ri = next - 1
+      var sel = this._sel + dir
+      if (sel < -1 || sel >= rows.length) return
 
-      curr !== 0 && (rows[curr - 1].className = '')
+      rows.removeClass('trh');
+      $(rows[sel]).addClass('trh');
 
-      if (next === 0) this.$input.val(this._val) && this.$ghost.val(this._rel)
-      else rows[ri].className = this.$input.val(this._data[next - 1].name) && this.$ghost.val('') ? 'trh' : ''
+      if (sel === -1) {
+        this.$input.val(this._val) && this.$ghost.val(this._rel)
+      } else {
+        this.$input.val(this._data[sel].name) && this.$ghost.val('')
+      }
+
+      this._sel = sel
     }
+
+  , reset: function () {
+    this.$res.hide()
+    this.$ghost.val('')
+  }
+
+  , complete: function () {
+    if (this.$ghost.val()) {
+      this._val = this._data[0].name
+      this._rel = ''
+      this.$input.val(this._val)
+      this.$ghost.val('')
+      return true
+    } else {
+      return false
+    }
+  }
 
   }
 
