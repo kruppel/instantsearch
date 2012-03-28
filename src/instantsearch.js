@@ -231,23 +231,23 @@ var lib = $ === jQuery ? jQuery : ender
     }
 
   , reset: function () {
-    $('body').off('keydown', this._bodyKeydown)
+      $('body').off('keydown', this._bodyKeydown)
 
-    this.$res.hide()
-    this.$ghost.val('')
-  }
+      this.$res.hide()
+      this.$ghost.val('')
+    }
 
   , complete: function () {
-    if (this.$ghost.val()) {
-      this._val = this._data[0].name
-      this._rel = ''
-      this.$input.val(this._val)
-      this.$ghost.val('')
-      return true
-    } else {
-      return false
+      if (this.$ghost.val()) {
+        this._val = this._data[0].name
+        this._rel = ''
+        this.$input.val(this._val)
+        this.$ghost.val('')
+        return true
+      } else {
+        return false
+      }
     }
-  }
 
   , _bodyKeydown: function (e) {
       // escape
