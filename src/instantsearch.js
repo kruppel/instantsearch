@@ -235,6 +235,7 @@ var lib = $ === jQuery ? jQuery : ender
   , reset: function () {
       $('body').off('keydown', this._bodyKeydown)
 
+      this._sel = -1;
       this.showResults(null);
     }
 
