@@ -135,8 +135,8 @@ var lib = $ === jQuery ? jQuery : ender
     })
 
     this.$resList.on('click', function (e) {
-      self.search()
-      self.$input.focus()
+      self.complete()
+      self.reset()
     })
 
   }
@@ -233,8 +233,7 @@ var lib = $ === jQuery ? jQuery : ender
   , reset: function () {
       $('body').off('keydown', this._bodyKeydown)
 
-      this.$res.hide()
-      this.$ghost.val('')
+      this.showResults(null);
     }
 
   , complete: function () {
