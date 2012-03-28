@@ -48,6 +48,10 @@ var lib = $ === jQuery ? jQuery : ender
 
       switch(e.keyCode) {
 
+        // left
+        case 37:
+          break
+
         // up
         case 38:
           self.navigate(-1)
@@ -78,6 +82,34 @@ var lib = $ === jQuery ? jQuery : ender
         // escape
         case 27:
           self.reset();
+          break
+
+        // shift
+        case 16:
+        // ctrl
+        case 17:
+        // alt
+        case 18:
+        // pause/break
+        case 19:
+        // caps lock
+        case 20:
+        // page up
+        case 33:
+        // page down
+        case 34:
+        // end
+        case 35:
+        // home
+        case 36:
+        // insert
+        case 45:
+        // window key / cmd
+        case 91:
+        case 92:
+        // select
+        case 93:
+          // TODO: We might want f-keys here too
           break
 
         default:
