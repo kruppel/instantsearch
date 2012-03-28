@@ -38,9 +38,9 @@ var lib = $ === jQuery ? jQuery : ender
     this.$res = $('<div class="instant-search-results"><ul class="list"></ul></div>')
                   .css({
                     position: 'absolute',
-                    top:      this.$el.offset().top + this.$el.height(),
+                    top:      this.$el.offset().top + this.$el.outerHeight(),
                     left:     this.$el.offset().left,
-                    width:    this.$el.width()
+                    width:    this.$el.outerWidth()
                   })
                   .hide()
                   .appendTo('body')
