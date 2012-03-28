@@ -50,7 +50,7 @@ var lib = $ === jQuery ? jQuery : ender
 
         // up
         case 38:
-          self.navigate(1)
+          self.navigate(-1)
           e.preventDefault()
           break
 
@@ -64,7 +64,7 @@ var lib = $ === jQuery ? jQuery : ender
 
         // down
         case 40:
-          self.navigate(-1)
+          self.navigate(1)
           e.preventDefault()
           break
 
@@ -91,7 +91,9 @@ var lib = $ === jQuery ? jQuery : ender
 
   $.InstantSearch.prototype = {
 
-    _rel: '',
+    _rel: ''
+
+  , _sel: -1
 
     doIt: function () {
       var self = this
@@ -148,16 +150,24 @@ var lib = $ === jQuery ? jQuery : ender
     }
 
   , navigate: function (dir) {
-      var rows = this.$res.find('.sbr_e > tbody > tr')
-        , i = rows.length + 1
-        , sel, curr, next, ri
+      var rows = this.$resList.find('.sbr_a tr')
 
-      if (i === 0) return
+      if (rows.length === 0) return
 
-      sel = this._sel
-      curr = sel % i
-      next = this._sel = (sel + i - dir) % i
-      ri = next - 1
+      var sel = this._sel + dir
+      if (sel < -1 || sel >= rows.length) return
+
+      rows.removeClass('trh');
+      $(rows[sel]).addClass('trh');
+
+      if (sel === -1) {
+        this.$input.val(this._val) && this.$ghost.val(this._rel)
+      } else {
+        this.$input.val(this._data[sel].name) && this.$ghost.val('')
+      }
+
+      this._sel = sel
+    }
 
       curr !== 0 && (rows[curr - 1].className = '')
 
