@@ -23,9 +23,10 @@ var lib = $ === jQuery ? jQuery : ender
   fn['instantSearch'] = instantSearch
 
   $.InstantSearch = function ($el, options) {
-    var self = this
-      , id   = $el.attr('id')
-      , name = $el.attr('name')
+    var self    = this
+      , id      = $el.attr('id')
+      , name    = $el.attr('name')
+      , classes = $el.attr('class')
 
     this.src = options.source
 
@@ -47,6 +48,7 @@ var lib = $ === jQuery ? jQuery : ender
 
     this.$input = this.$el.find('.input')
     this.$input.attr({ id: id, name: name })
+               .addClass(classes)
 
     this.$ghost = this.$el.find('.ghost')
 
