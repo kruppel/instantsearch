@@ -192,7 +192,7 @@ var lib = $ === jQuery ? jQuery : ender
           , match = matchset[1] || ''
           , rest =  matchset[2] || ''
           , content = '<tr><td class="sbr_a" dir="ltr" style="text-align: left;"><div class="sbq_a"><table cellspacing="0" cellpadding="0" style="width: 100%;" class="sbr_m"><tbody><tr><td style="width: 100%;">'
-          , guess = (start === '') ? val + rest : '';
+          , guess = (start === '' && rest !== '') ? val + rest : ''
 
         i === 0 && (this._rel = guess) && ghost.val(guess)
         content += '<span><b>' + start + '</b>' + match + '<b>' + rest + '</b></span></td></tr></tbody></table></div></td></tr>'
