@@ -186,7 +186,8 @@ var lib = $ === jQuery ? jQuery : ender
       if (rows.length === 0) return
 
       var sel = this._sel + dir
-      if (sel < -1 || sel >= rows.length) return
+      if (sel < -1) sel += (rows.length + 1)
+      if (sel >= rows.length) sel -= (rows.length + 1)
 
       rows.removeClass('trh');
       $(rows[sel]).addClass('trh');
