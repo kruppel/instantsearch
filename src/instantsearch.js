@@ -30,6 +30,8 @@ var lib = $ === jQuery ? jQuery : ender
 
     this.src = options.source
     this.action = options.action
+    this.closeOnBlur = options.closeOnBlur
+    this.completeOnEnter = options.completeOnEnter
 
     this.$el = $('<div class="instant-search-field">'+
                    '<input class="input" type="text" autocomplete="off" spellcheck="false" dir="ltr">'+
@@ -82,8 +84,12 @@ var lib = $ === jQuery ? jQuery : ender
 
         // return
         case 13:
-          self.reset()
-          self.trigger()
+          if (self.completeOnEnter) {
+            if (self.complete()) self.trigger()
+          } else {
+            self.reset()
+            self.trigger()
+          }
           e.preventDefault()
           break
 
@@ -128,7 +134,17 @@ var lib = $ === jQuery ? jQuery : ender
 
     this.$input.on('cut paste', function (e) {
       self.search()
-    });
+    })
+
+    if (this.closeOnBlur) {
+      this.$input.on('blur', function (e) {
+        self.reset()
+      })
+
+      this.$input.on('focus', function (e) {
+        self.search()
+      })
+    }
 
     this.$res.on('mouseenter', 'ul.list li', function (e) {
       var items = self.$res.find('ul.list li')
