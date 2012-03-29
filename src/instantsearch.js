@@ -29,6 +29,7 @@ var lib = $ === jQuery ? jQuery : ender
       , classes = $el.attr('class')
 
     this.src = options.source
+    this.action = options.action
 
     this.$el = $('<div class="instant-search-field">'+
                    '<input class="input" type="text" autocomplete="off" spellcheck="false" dir="ltr">'+
@@ -81,6 +82,11 @@ var lib = $ === jQuery ? jQuery : ender
 
         // return
         case 13:
+          self.reset()
+          self.trigger()
+          e.preventDefault()
+          break
+
         // escape
         case 27:
           self.reset();
@@ -133,6 +139,7 @@ var lib = $ === jQuery ? jQuery : ender
     this.$res.on('click', function (e) {
       self.complete()
       self.reset()
+      self.trigger()
     })
 
   }
@@ -254,6 +261,14 @@ var lib = $ === jQuery ? jQuery : ender
         return false
       }
     }
+
+  , trigger: function () {
+    if (this.action) {
+      this.action.call(this, this.$input.val())
+    } else {
+      this.$el.parent('form').submit()
+    }
+  }
 
   , _bodyKeydown: function (e) {
       // escape
