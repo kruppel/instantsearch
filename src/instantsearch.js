@@ -47,7 +47,7 @@ var lib = $ === jQuery ? jQuery : ender
 
     this.$ghost = this.$el.find('.ghost')
 
-    this.$el.on('keydown', function (e) {
+    this.$input.on('keydown', function (e) {
 
       switch(e.keyCode) {
 
@@ -126,6 +126,10 @@ var lib = $ === jQuery ? jQuery : ender
 
     })
 
+    this.$input.on('cut paste', function (e) {
+      self.search()
+    });
+
     this.$res.on('mouseenter', 'ul.list li', function (e) {
       var items = self.$res.find('ul.list li')
         , idx   = items.index(this)
@@ -185,7 +189,12 @@ var lib = $ === jQuery ? jQuery : ender
 
       this._sel = -1
 
-      if (val === '' || !data || data.length === 0) return ghost.val('') && res.hide() && false
+      if (val === '' || !data || data.length === 0) {
+        ghost.val('')
+        res.hide()
+        $('body').off('keydown', this._bodyKeydown)
+        return false
+      }
 
       $('body').on('keydown', $.proxy(this._bodyKeydown, this))
 
@@ -246,7 +255,6 @@ var lib = $ === jQuery ? jQuery : ender
     }
 
   , reset: function () {
-      $('body').off('keydown', this._bodyKeydown)
       this.showResults(null)
     }
 
