@@ -183,6 +183,8 @@ var lib = $ === jQuery ? jQuery : ender
 
       list.empty()
 
+      this._sel = -1
+
       if (val === '' || !data || data.length === 0) return ghost.val('') && res.hide() && false
 
       $('body').on('keydown', $.proxy(this._bodyKeydown, this))
@@ -245,8 +247,6 @@ var lib = $ === jQuery ? jQuery : ender
 
   , reset: function () {
       $('body').off('keydown', this._bodyKeydown)
-
-      this._sel = -1
       this.showResults(null)
     }
 
