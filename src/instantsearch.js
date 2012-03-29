@@ -63,7 +63,7 @@ var lib = $ === jQuery ? jQuery : ender
 
         // right
         case 39:
-          self.complete();
+          self.complete()
           break
 
         // down
@@ -75,8 +75,8 @@ var lib = $ === jQuery ? jQuery : ender
         // tab
         case 9:
           if (self.complete()) {
-            self.search();
-            e.preventDefault();
+            self.search()
+            e.preventDefault()
           }
           break
 
@@ -89,7 +89,7 @@ var lib = $ === jQuery ? jQuery : ender
 
         // escape
         case 27:
-          self.reset();
+          self.reset()
           break
 
         // shift
@@ -161,7 +161,7 @@ var lib = $ === jQuery ? jQuery : ender
 
         // Hide ghost if we no longer match it
         if (q.toLowerCase() !== self._rel.slice(0, q.length).toLowerCase()) {
-          self.$ghost.val('');
+          self.$ghost.val('')
         }
 
         self.src({ term: q }, function (data, err) {
@@ -225,14 +225,14 @@ var lib = $ === jQuery ? jQuery : ender
       if (sel < -1) sel += (items.length + 1)
       if (sel >= items.length) sel -= (items.length + 1)
 
-      this.navigateTo(sel);
+      this.navigateTo(sel)
     }
 
   , navigateTo: function (sel) {
       var items = this.$res.find('ul.list li')
 
-      items.removeClass('highlight');
-      $(items[sel]).addClass('highlight');
+      items.removeClass('highlight')
+      $(items[sel]).addClass('highlight')
 
       if (sel === -1) {
         this.$input.val(this._val) && this.$ghost.val(this._rel)
@@ -246,8 +246,8 @@ var lib = $ === jQuery ? jQuery : ender
   , reset: function () {
       $('body').off('keydown', this._bodyKeydown)
 
-      this._sel = -1;
-      this.showResults(null);
+      this._sel = -1
+      this.showResults(null)
     }
 
   , complete: function () {
