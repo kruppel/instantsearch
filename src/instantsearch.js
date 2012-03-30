@@ -86,7 +86,8 @@ var lib = $ === jQuery ? jQuery : ender
         // return
         case 13:
           if (self.completeOnEnter) {
-            if (self.complete()) self.trigger()
+            self.complete()
+            self.trigger()
           } else {
             self.reset()
             self.trigger()
@@ -292,6 +293,10 @@ var lib = $ === jQuery ? jQuery : ender
       } else {
         return false
       }
+    }
+
+  , valueIsInList: function (value) {
+      return this._data && jQuery.inArray(value, this._data) !== -1
     }
 
   , trigger: function () {
