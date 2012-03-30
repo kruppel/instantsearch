@@ -32,6 +32,7 @@ var lib = $ === jQuery ? jQuery : ender
     this.action = options.action
     this.closeOnBlur = options.closeOnBlur
     this.completeOnEnter = options.completeOnEnter
+    this.showNoResults = options.showNoResults
 
     this.$el = $('<div class="instant-search-field">'+
                    '<input class="input" type="text" autocomplete="off" spellcheck="false" dir="ltr">'+
@@ -146,8 +147,8 @@ var lib = $ === jQuery ? jQuery : ender
       })
     }
 
-    this.$res.on('mouseenter', 'ul.list li', function (e) {
-      var items = self.$res.find('ul.list li')
+    this.$res.on('mouseenter', 'ul.list li.item', function (e) {
+      var items = self.$res.find('ul.list li.item')
         , idx   = items.index(this)
       self.navigateTo(idx)
     })
@@ -188,12 +189,12 @@ var lib = $ === jQuery ? jQuery : ender
           if (err) throw new Error(err)
 
           self._data = data
-          self.showResults(data)
+          self.showResults(data, self.showNoResults)
         })
       }, 0)
     }
 
-  , showResults: function (data) {
+  , showResults: function (data, showNoResults) {
       var res = this.$res
         , list = res.find('ul.list')
         , ghost = this.$ghost
@@ -207,8 +208,15 @@ var lib = $ === jQuery ? jQuery : ender
 
       if (val === '' || !data || data.length === 0) {
         ghost.val('')
-        res.hide()
-        $('body').off('keydown', this._bodyKeydown)
+
+        if (showNoResults && val !== '') {
+          res.show()
+          list.append('<li class="no-results">No Results</li>')
+        } else {
+          res.hide()
+          $('body').off('keydown', this._bodyKeydown)
+        }
+
         return false
       }
 
@@ -226,7 +234,7 @@ var lib = $ === jQuery ? jQuery : ender
 
         i === 0 && (this._rel = guess) && ghost.val(guess)
 
-        content = '<li><strong>' + start + '</strong>' + match + '<strong>' + rest + '</strong></li>'
+        content = '<li class="result"><strong>' + start + '</strong>' + match + '<strong>' + rest + '</strong></li>'
 
         list.append(content)
       }
@@ -244,7 +252,7 @@ var lib = $ === jQuery ? jQuery : ender
     }
 
   , navigate: function (dir) {
-      var items = this.$res.find('ul.list li')
+      var items = this.$res.find('ul.list li.item')
 
       if (items.length === 0) return
 
@@ -256,7 +264,7 @@ var lib = $ === jQuery ? jQuery : ender
     }
 
   , navigateTo: function (sel) {
-      var items = this.$res.find('ul.list li')
+      var items = this.$res.find('ul.list li.item')
 
       items.removeClass('highlight')
       $(items[sel]).addClass('highlight')
