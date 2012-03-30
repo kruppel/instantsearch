@@ -19,7 +19,7 @@
                 name: req.term
               },
               success: function (data) {
-                var artists = data.response.artists;
+                var artists = jQuery.map(data.response.artists, function (i) { return i.name; });
 
                 res(artists, null);
               },

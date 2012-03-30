@@ -223,7 +223,7 @@ var lib = $ === jQuery ? jQuery : ender
       $('body').on('keydown', $.proxy(this._bodyKeydown, this))
 
       for (i = 0; i < len; i++) {
-        var result = data[i].name
+        var result = data[i]
           , regex = new RegExp('(' + val + ')(.*)', 'i')
           , matchset = result.match(regex) || {}
           , start = result.substr(0, matchset.index)
@@ -272,7 +272,7 @@ var lib = $ === jQuery ? jQuery : ender
       if (sel === -1) {
         this.$input.val(this._val) && this.$ghost.val(this._rel)
       } else {
-        this.$input.val(this._data[sel].name) && this.$ghost.val('')
+        this.$input.val(this._data[sel]) && this.$ghost.val('')
       }
 
       this._sel = sel
@@ -284,7 +284,7 @@ var lib = $ === jQuery ? jQuery : ender
 
   , complete: function () {
       if (this.$ghost.val()) {
-        this._val = this._data[0].name
+        this._val = this._data[0]
         this._rel = ''
         this.$input.val(this._val)
         this.$ghost.val('')
