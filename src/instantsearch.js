@@ -148,8 +148,8 @@ var lib = $ === jQuery ? jQuery : ender
       })
     }
 
-    this.$res.on('mouseenter', 'ul.list li.item', function (e) {
-      var items = self.$res.find('ul.list li.item')
+    this.$res.on('mouseenter', 'ul.list li.result', function (e) {
+      var items = self.$res.find('ul.list li.result')
         , idx   = items.index(this)
       self.navigateTo(idx)
     })
@@ -253,7 +253,7 @@ var lib = $ === jQuery ? jQuery : ender
     }
 
   , navigate: function (dir) {
-      var items = this.$res.find('ul.list li.item')
+      var items = this.$res.find('ul.list li.result')
 
       if (items.length === 0) return
 
@@ -265,7 +265,7 @@ var lib = $ === jQuery ? jQuery : ender
     }
 
   , navigateTo: function (sel) {
-      var items = this.$res.find('ul.list li.item')
+      var items = this.$res.find('ul.list li.result')
 
       items.removeClass('highlight')
       $(items[sel]).addClass('highlight')
@@ -300,12 +300,12 @@ var lib = $ === jQuery ? jQuery : ender
     }
 
   , trigger: function () {
-    if (this.action) {
-      this.action.call(this, this.$input.val())
-    } else {
-      this.$el.parent('form').submit()
+      if (this.action) {
+        this.action.call(this, this.$input.val())
+      } else {
+        this.$el.parent('form').submit()
+      }
     }
-  }
 
   , _bodyKeydown: function (e) {
       // escape
