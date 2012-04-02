@@ -158,7 +158,7 @@ var lib = $ === jQuery ? jQuery : ender
       self.navigateTo(-1)
     })
 
-    this.$res.on('click', function (e) {
+    this.$res.on('mousedown', function (e) {
       self.complete()
       self.reset()
       self.trigger()
