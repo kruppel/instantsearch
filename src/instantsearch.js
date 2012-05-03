@@ -178,11 +178,19 @@ var lib = $ === jQuery ? jQuery : ender
       this._tid && clearTimeout(this._tid)
       this._tid = setTimeout(function () {
         var q = self._val = self.$input.val()
+          , part
 
         if (q === '') return self.showResults()
 
-        // Hide ghost if we no longer match it
-        if (q.toLowerCase() !== self._rel.slice(0, q.length).toLowerCase()) {
+        part = self._rel.slice(0, q.length)
+
+        if (q.toLowerCase() === part.toLowerCase()) {
+          // Case doesn't match, match casing in ghost
+          if (q !== part) {
+            self.$ghost.val(q + self._rel.slice(q.length))
+          }
+        } else {
+          // Hide ghost if we no longer match it
           self.$ghost.val('')
         }
 
