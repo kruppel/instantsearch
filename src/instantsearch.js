@@ -211,6 +211,10 @@ var lib = $ === jQuery ? jQuery : ender
         , len = data && data.length
         , i
 
+      // Don't show results again if value hasn't changed
+      if (val === this._triggeredValue) { return; }
+      this._triggeredValue = null;
+
       list.empty()
 
       this._sel = -1
@@ -308,8 +312,9 @@ var lib = $ === jQuery ? jQuery : ender
     }
 
   , trigger: function () {
+      var value = this._triggeredValue = this.$input.val();
       if (this.action) {
-        this.action.call(this, this.$input.val())
+        this.action.call(this, value)
       } else {
         this.$el.parent('form').submit()
       }
