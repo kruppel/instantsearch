@@ -1,54 +1,53 @@
 /*!
-  * instantsearch: GOOGish autocomplete © Kurt Ruppel 2012
+  * instantsearch: GOOGish autocomplete © Kurt Ruppel 2013
   *
   * https://github.com/kruppel/instantsearch
   * LICENSE: MIT
   */
 
-var lib = $ === jQuery ? jQuery : ender
+(function ($) {
 
-!function ($) {
+  $.fn.instantSearch = function (options) {
+    var opts = $.extend({}, options);
 
-  var instantSearch = function (options) {
-        var opts = $.extend({}, options)
+    return this.each(function () {
+      var $this = $(this);
 
-        return this.each(function () {
-          var $this = $(this)
-
-          $this.data('instantsearch', new $.InstantSearch($this, opts))
-        })
-      }
-    , fn = $ === jQuery ? $.fn : $.ender
-
-  fn['instantSearch'] = instantSearch
+      $this.data('instantsearch', new $.InstantSearch($this, opts));
+    });
+  };
 
   $.InstantSearch = function ($el, options) {
     var self    = this
       , id      = $el.attr('id')
       , name    = $el.attr('name')
-      , classes = $el.attr('class')
+      , classes = $el.attr('class');
 
-    this.src = options.source
-    this.action = options.action
-    this.closeOnBlur = options.closeOnBlur
-    this.completeOnEnter = options.completeOnEnter
-    this.showNoResults = options.showNoResults
+    this.src             = options.source;
+    this.action          = options.action;
+    this.closeOnBlur     = options.closeOnBlur;
+    this.completeOnEnter = options.completeOnEnter;
+    this.showNoResults   = options.showNoResults;
 
-    this.$el = $('<div class="instant-search-field">'+
-                   '<input class="input" type="text" autocomplete="off" spellcheck="false" dir="ltr">'+
-                   '<input class="ghost" disabled autocomplete="off">'+
-                 '</div>')
-    $el.replaceWith(this.$el)
+    this.$el = $(
+      '<div class="instant-search-field">'+
+      '<input class="input" type="text" autocomplete="off" spellcheck="false" dir="ltr">'+
+      '<input class="ghost" disabled autocomplete="off">'+
+      '</div>'
+    );
+    $el.replaceWith(this.$el);
 
-    this.$res = $('<div class="instant-search-results"><ul class="list"></ul></div>')
-                  .hide()
-                  .appendTo('body')
+    this.$res = $(
+      '<div class="instant-search-results">' +
+      '<ul class="list"></ul>' +
+      '</div>'
+    ).hide().appendTo('body');
 
-    this.$input = this.$el.find('.input')
+    this.$input = this.$el.find('.input');
     this.$input.attr({ id: id, name: name })
-               .addClass(classes)
+               .addClass(classes);
 
-    this.$ghost = this.$el.find('.ghost')
+    this.$ghost = this.$el.find('.ghost');
 
     this.$input.on('keydown', function (e) {
 
@@ -56,49 +55,49 @@ var lib = $ === jQuery ? jQuery : ender
 
         // left
         case 37:
-          break
+          break;
 
         // up
         case 38:
-          self.navigate(-1)
-          e.preventDefault()
-          break
+          self.navigate(-1);
+          e.preventDefault();
+          break;
 
         // right
         case 39:
-          self.complete()
-          break
+          self.complete();
+          break;
 
         // down
         case 40:
-          self.navigate(1)
-          e.preventDefault()
-          break
+          self.navigate(1);
+          e.preventDefault();
+          break;
 
         // tab
         case 9:
           if (self.complete()) {
-            self.search()
-            e.preventDefault()
+            self.search();
+            e.preventDefault();
           }
-          break
+          break;
 
         // return
         case 13:
           if (self.completeOnEnter) {
-            self.complete()
-            self.trigger()
+            self.complete();
+            self.trigger();
           } else {
-            self.reset()
-            self.trigger()
+            self.reset();
+            self.trigger();
           }
-          e.preventDefault()
-          break
+          e.preventDefault();
+          break;
 
         // escape
         case 27:
-          self.reset()
-          break
+          self.reset();
+          break;
 
         // shift
         case 16:
@@ -126,45 +125,45 @@ var lib = $ === jQuery ? jQuery : ender
         // select
         case 93:
           // TODO: We might want f-keys here too
-          break
+          break;
 
         default:
-          self.search()
+          self.search();
       }
 
-    })
+    });
 
     this.$input.on('cut paste', function (e) {
-      self.search()
-    })
+      self.search();
+    });
 
     if (this.closeOnBlur) {
       this.$input.on('blur', function (e) {
-        self.reset()
-      })
+        self.reset();
+      });
 
       this.$input.on('focus', function (e) {
-        self.search()
-      })
+        self.search();
+      });
     }
 
     this.$res.on('mouseenter', 'ul.list li.result', function (e) {
       var items = self.$res.find('ul.list li.result')
-        , idx   = items.index(this)
-      self.navigateTo(idx)
-    })
+        , idx   = items.index(this);
+      self.navigateTo(idx);
+    });
 
     this.$res.on('mouseleave', function (e) {
-      self.navigateTo(-1)
-    })
+      self.navigateTo(-1);
+    });
 
     this.$res.on('mousedown', function (e) {
-      self.complete()
-      self.reset()
-      self.trigger()
-    })
+      self.complete();
+      self.reset();
+      self.trigger();
+    });
 
-  }
+  };
 
   $.InstantSearch.prototype = {
 
@@ -173,34 +172,34 @@ var lib = $ === jQuery ? jQuery : ender
   , _sel: -1
 
   , search: function () {
-      var self = this
+      var self = this;
 
-      this._tid && clearTimeout(this._tid)
+      this._tid && clearTimeout(this._tid);
       this._tid = setTimeout(function () {
         var q = self._val = self.$input.val()
-          , part
+          , part;
 
-        if (q === '') return self.showResults()
+        if (q === '') return self.showResults();
 
-        part = self._rel.slice(0, q.length)
+        part = self._rel.slice(0, q.length);
 
         if (q.toLowerCase() === part.toLowerCase()) {
           // Case doesn't match, match casing in ghost
           if (q !== part) {
-            self.$ghost.val(q + self._rel.slice(q.length))
+            self.$ghost.val(q + self._rel.slice(q.length));
           }
         } else {
           // Hide ghost if we no longer match it
-          self.$ghost.val('')
+          self.$ghost.val('');
         }
 
         self.src({ term: q }, function (data, err) {
-          if (err) throw new Error(err)
+          if (err) throw new Error(err);
 
-          self._data = data
-          self.showResults(data, self.showNoResults)
-        })
-      }, 0)
+          self._data = data;
+          self.showResults(data, self.showNoResults);
+        });
+      }, 0);
     }
 
   , showResults: function (data, showNoResults) {
@@ -209,31 +208,31 @@ var lib = $ === jQuery ? jQuery : ender
         , ghost = this.$ghost
         , val = this.$input.val()
         , len = data && data.length
-        , i
+        , i;
 
       // Don't show results again if value hasn't changed
       if (val === this._triggeredValue) { return; }
       this._triggeredValue = null;
 
-      list.empty()
+      list.empty();
 
-      this._sel = -1
+      this._sel = -1;
 
       if (val === '' || !data || data.length === 0) {
-        ghost.val('')
+        ghost.val('');
 
         if (showNoResults && val !== '') {
-          res.show()
-          list.append('<li class="no-results">No Results</li>')
+          res.show();
+          list.append('<li class="no-results">No Results</li>');
         } else {
-          res.hide()
-          $('body').off('keydown', this._bodyKeydown)
+          res.hide();
+          $('body').off('keydown', this._bodyKeydown);
         }
 
-        return false
+        return false;
       }
 
-      $('body').on('keydown', $.proxy(this._bodyKeydown, this))
+      $('body').on('keydown', $.proxy(this._bodyKeydown, this));
 
       for (i = 0; i < len; i++) {
         var result = data[i]
@@ -243,88 +242,88 @@ var lib = $ === jQuery ? jQuery : ender
           , match = matchset[1] || ''
           , rest =  matchset[2] || ''
           , guess = (start === '' && rest !== '') ? val + rest : ''
-          , content
+          , content;
 
-        i === 0 && (this._rel = guess) && ghost.val(guess)
+        i === 0 && (this._rel = guess) && ghost.val(guess);
 
-        content = '<li class="result"><strong>' + start + '</strong>' + match + '<strong>' + rest + '</strong></li>'
+        content = '<li class="result"><strong>' + start + '</strong>' + match + '<strong>' + rest + '</strong></li>';
 
-        list.append(content)
+        list.append(content);
       }
 
       if (res.is(':hidden')) {
         res.css({
-              position: 'absolute',
-              top:      this.$el.offset().top + this.$el.outerHeight(),
-              left:     this.$el.offset().left,
-              width:    this.$el.outerWidth()
-            })
-            .show()
+          position: 'absolute',
+          top:      this.$el.offset().top + this.$el.outerHeight(),
+          left:     this.$el.offset().left,
+          width:    this.$el.outerWidth()
+        }).show();
       }
-      return true
+      return true;
     }
 
   , navigate: function (dir) {
-      var items = this.$res.find('ul.list li.result')
+      var items = this.$res.find('ul.list li.result');
 
-      if (items.length === 0) return
+      if (items.length === 0) return;
 
-      var sel = this._sel + dir
-      if (sel < -1) sel += (items.length + 1)
-      if (sel >= items.length) sel -= (items.length + 1)
+      var sel = this._sel + dir;
+      if (sel < -1) sel += (items.length + 1);
+      if (sel >= items.length) sel -= (items.length + 1);
 
-      this.navigateTo(sel)
+      this.navigateTo(sel);
     }
 
   , navigateTo: function (sel) {
-      var items = this.$res.find('ul.list li.result')
+      var items = this.$res.find('ul.list li.result');
 
-      items.removeClass('highlight')
-      $(items[sel]).addClass('highlight')
+      items.removeClass('highlight');
+      $(items[sel]).addClass('highlight');
 
       if (sel === -1) {
-        this.$input.val(this._val) && this.$ghost.val(this._rel)
+        this.$input.val(this._val) && this.$ghost.val(this._rel);
       } else {
-        this.$input.val(this._data[sel]) && this.$ghost.val('')
+        this.$input.val(this._data[sel]) && this.$ghost.val('');
       }
 
-      this._sel = sel
+      this._sel = sel;
     }
 
   , reset: function () {
-      this.showResults(null)
+      this.showResults(null);
     }
 
   , complete: function () {
       if (this.$ghost.val()) {
-        this._val = this._data[0]
-        this._rel = ''
-        this.$input.val(this._val)
-        this.$ghost.val('')
-        return true
+        this._val = this._data[0];
+        this._rel = '';
+        this.$input.val(this._val);
+        this.$ghost.val('');
+        return true;
       } else {
-        return false
+        return false;
       }
     }
 
   , valueIsInList: function (value) {
-      return this._data && jQuery.inArray(value, this._data) !== -1
+      return this._data && jQuery.inArray(value, this._data) !== -1;
     }
 
   , trigger: function () {
       var value = this._triggeredValue = this.$input.val();
+
       if (this.action) {
-        this.action.call(this, value)
+        this.action.call(this, value);
       } else {
-        this.$el.parent('form').submit()
+        this.$el.parent('form').submit();
       }
     }
 
   , _bodyKeydown: function (e) {
       // escape
-      if (e.keyCode === 27) this.reset()
+      e.keyCode === 27 && this.reset();
     }
 
-  }
+  };
 
-}(lib)
+}(jQuery));
