@@ -1,0 +1,11 @@
+{
+  "name": "instantsearch",
+  "title": "instantsearch",
+  "version": "0.0.2",
+  "description": "GOOGish autocomplete",
+  "keywords": ["autocomplete", "search"],
+  "licenses": [{
+    "type": "MIT"
+  , "url": "https://github.com/kruppel/instantsearch/raw/master/LICENSE"
+  }],
+}
