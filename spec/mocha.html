@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>InstantSearch Tests</title>
+    <link type="text/css" rel="stylesheet" href="vendor/mocha.css" />
+    <script type="text/javascript" src="vendor/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="vendor/chai.js"></script>
+    <script type="text/javascript" src="vendor/sinon-chai.js"></script>
+    <script type="text/javascript" src="vendor/sinon.js"></script>
+    <script type="text/javascript" src="vendor/mocha.js"></script>
+    <script type="text/javascript" src="../src/instantsearch.js"></script>
+    <script type="text/javascript">
+      var should = chai.should(),
+          mochaOptions;
+
+      mochaOptions = { ui: 'bdd' };
+      chai.Assertion.includeStack = true;
+      mocha.setup(mochaOptions);
+
+      // After setup, add should to window so we can use
+      // http://chaijs.com/guide/styles/#should-extras
+      window.should = should;
+    </script>
+    <script type="text/javascript" src="instantsearch.mocha.js"></script>
+    <script>
+      $(document).ready(function () {
+        if (window.mochaPhantomJS) {
+          mochaPhantomJS.run();
+        } else {
+          mocha.run();
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <div id="sandbox" style="visibility: hidden;"></div>
+  </body>
+</html>
