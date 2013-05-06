@@ -7,6 +7,49 @@
 
 (function ($) {
 
+  var IGNORED_KEY_CODES = [
+    16//shift
+  , 17//ctrl
+  , 18//alt
+  , 19//pause/break
+  , 20//caps lock
+  , 33//page up
+  , 34//page down
+  , 35//end
+  , 36//home
+  , 37//left
+  , 45//insert
+  , 91//windows-key/cmd
+  , 92
+  , 93//select
+  , 112//f1
+  , 113//f2
+  , 114//f3
+  , 115//f4
+  , 116//f5
+  , 117//f6
+  , 118//f7
+  , 119//f8
+  , 120//f9
+  , 121//f10
+  , 122//f11
+  , 123//f12
+  , 124//f13
+  , 125//f14
+  , 126//f15
+  ];
+
+  function SearchResult(term, value) {
+    var regex = new RegExp('(' + term + ')(.*)', 'i')
+      , matchset = value.match(regex) || {}
+      , start = value.substr(0, matchset.index)
+      , match = matchset[1] || ''
+      , rest =  matchset[2] || '';
+
+    this.guess = (start === '' && rest !== '') ? term + rest : '';
+    this.el = '<li class="result"><strong>' + start + '</strong>' + match + '<strong>' + rest + '</strong></li>';
+  }
+
   $.fn.instantSearch = function (options) {
     var opts = $.extend({}, options);
 
@@ -50,12 +93,11 @@
     this.$ghost = this.$el.find('.ghost');
 
     this.$input.on('keydown', function (e) {
+      var keyCode = e.keyCode;
 
-      switch(e.keyCode) {
+      if (IGNORED_KEY_CODES.indexOf(keyCode) !== -1) return;
 
-        // left
-        case 37:
-          break;
+      switch(keyCode) {
 
         // up
         case 38:
@@ -99,34 +141,6 @@
           self.reset();
           break;
 
-        // shift
-        case 16:
-        // ctrl
-        case 17:
-        // alt
-        case 18:
-        // pause/break
-        case 19:
-        // caps lock
-        case 20:
-        // page up
-        case 33:
-        // page down
-        case 34:
-        // end
-        case 35:
-        // home
-        case 36:
-        // insert
-        case 45:
-        // window key / cmd
-        case 91:
-        case 92:
-        // select
-        case 93:
-          // TODO: We might want f-keys here too
-          break;
-
         default:
           self.search();
       }
@@ -149,8 +163,9 @@
 
     this.$res.on('mouseenter', 'ul.list li.result', function (e) {
       var items = self.$res.find('ul.list li.result')
-        , idx   = items.index(this);
-      self.navigateTo(idx);
+        , index = items.index(this);
+
+      self.navigateTo(index);
     });
 
     this.$res.on('mouseleave', function (e) {
@@ -162,7 +177,6 @@
       self.reset();
       self.trigger();
     });
-
   };
 
   $.InstantSearch.prototype = {
@@ -203,12 +217,18 @@
     }
 
   , showResults: function (data, showNoResults) {
-      var res = this.$res
+      var self = this
+        , res = this.$res
         , list = res.find('ul.list')
         , ghost = this.$ghost
         , val = this.$input.val()
         , len = data && data.length
-        , i;
+        , $body = $('body')
+        , i = 0
+        , content = ''
+        , onEscape
+        , result
+        , guess;
 
       // Don't show results again if value hasn't changed
       if (val === this._triggeredValue) { return; }
@@ -226,30 +246,31 @@
           list.append('<li class="no-results">No Results</li>');
         } else {
           res.hide();
-          $('body').off('keydown', this._bodyKeydown);
+          $body.off('keydown', onEscape);
         }
 
         return false;
       }
 
-      $('body').on('keydown', $.proxy(this._bodyKeydown, this));
+      $('body').on('keydown', onEscape = function (e) {
+        e.keyCode === 27 && self.reset();
+      });
 
-      for (i = 0; i < len; i++) {
-        var result = data[i]
-          , regex = new RegExp('(' + val + ')(.*)', 'i')
-          , matchset = result.match(regex) || {}
-          , start = result.substr(0, matchset.index)
-          , match = matchset[1] || ''
-          , rest =  matchset[2] || ''
-          , guess = (start === '' && rest !== '') ? val + rest : ''
-          , content;
+      for (; i < len; i++) {
+        result = new SearchResult(val, data[i]);
 
-        i === 0 && (this._rel = guess) && ghost.val(guess);
+        //
+        if (i === 0) {
+          guess = result.guess;
 
-        content = '<li class="result"><strong>' + start + '</strong>' + match + '<strong>' + rest + '</strong></li>';
+          this._rel = guess;
+          ghost.val(guess);
+        }
 
-        list.append(content);
+        content += result.el;
       }
+
+      list.append(content);
 
       if (res.is(':hidden')) {
         res.css({
@@ -259,17 +280,22 @@
           width:    this.$el.outerWidth()
         }).show();
       }
+
       return true;
     }
 
   , navigate: function (dir) {
-      var items = this.$res.find('ul.list li.result');
+      var items = this.$res.find('ul.list li.result')
+        , sel;
 
       if (items.length === 0) return;
 
-      var sel = this._sel + dir;
-      if (sel < -1) sel += (items.length + 1);
-      if (sel >= items.length) sel -= (items.length + 1);
+      sel = this._sel + dir;
+      if (sel < -1) {
+        sel += (items.length + 1);
+      } else if (sel >= items.length) {
+        sel -= (items.length + 1);
+      }
 
       this.navigateTo(sel);
     }
@@ -299,6 +325,7 @@
         this._rel = '';
         this.$input.val(this._val);
         this.$ghost.val('');
+
         return true;
       } else {
         return false;
@@ -306,7 +333,7 @@
     }
 
   , valueIsInList: function (value) {
-      return this._data && jQuery.inArray(value, this._data) !== -1;
+      return this._data && $.inArray(value, this._data) !== -1;
     }
 
   , trigger: function () {
@@ -317,11 +344,6 @@
       } else {
         this.$el.parent('form').submit();
       }
-    }
-
-  , _bodyKeydown: function (e) {
-      // escape
-      e.keyCode === 27 && this.reset();
     }
 
   };
