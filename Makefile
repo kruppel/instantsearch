@@ -1,5 +1,10 @@
-JSHINT :=./node_modules/.bin/jshint
+JSHINT := $(shell which jshint)
+PHANTOMJS :=$(shell which phantomjs)
 
-lint: $(JSHINT); $(JSHINT) src
+lint:
+	$(JSHINT) src
 
-.PHONY: lint
+test:
+	$(PHANTOMJS) spec/vendor/mocha-phantomjs.coffee spec/mocha.html
+
+.PHONY: lint test
