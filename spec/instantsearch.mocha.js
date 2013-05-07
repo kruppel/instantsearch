@@ -63,7 +63,53 @@ describe('instantsearch', function () {
 
       $.each(IGNORED_KEY_CODES, function (key, val) {
 
+        var keyCode = IGNORED_KEY_CODES[key];
+
         describe(key, function () {
+
+          beforeEach(function () {
+            sinon.stub($.InstantSearch.prototype, 'navigate');
+            sinon.stub($.InstantSearch.prototype, 'complete');
+            sinon.stub($.InstantSearch.prototype, 'trigger');
+            sinon.stub($.InstantSearch.prototype, 'search');
+
+            this.$input.instantSearch();
+            this.$instainput = $('.input');
+          });
+
+          afterEach(function () {
+            $.InstantSearch.prototype.navigate.restore();
+            $.InstantSearch.prototype.complete.restore();
+            $.InstantSearch.prototype.trigger.restore();
+            $.InstantSearch.prototype.search.restore();
+
+            this.$instainput = null;
+          });
+
+          it('does not navigate', function () {
+            this.$instainput.keydown({ keyCode: keyCode });
+
+            $.InstantSearch.prototype.navigate.should.not.have.been.called;
+          });
+
+          it('does not complete', function () {
+            this.$instainput.keydown({ keyCode: keyCode });
+
+            $.InstantSearch.prototype.complete.should.not.have.been.called;
+          });
+
+          it('does not trigger', function () {
+            this.$instainput.keydown({ keyCode: keyCode });
+
+            $.InstantSearch.prototype.trigger.should.not.have.been.called;
+          });
+
+          it('does not search', function () {
+            this.$instainput.keydown({ keyCode: keyCode });
+
+            $.InstantSearch.prototype.search.should.not.have.been.called;
+          });
+
         });
 
       });
