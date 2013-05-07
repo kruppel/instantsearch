@@ -292,9 +292,9 @@
 
       sel = this._sel + dir;
       if (sel < -1) {
-        sel += (items.length + 1);
+        sel += items.length + 1;
       } else if (sel >= items.length) {
-        sel -= (items.length + 1);
+        sel -= items.length + 1;
       }
 
       this.navigateTo(sel);
