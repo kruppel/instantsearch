@@ -87,31 +87,31 @@ describe('instantsearch', function () {
           });
 
           it('does not set input value', function () {
-            this.$instainput.keydown({ keyCode: keyCode });
+            this.$instainput.trigger($.Event('keydown', { keyCode: keyCode }));
 
             this.$instainput.val().should.be.empty;
           });
 
           it('does not navigate', function () {
-            this.$instainput.keydown({ keyCode: keyCode });
+            this.$instainput.trigger($.Event('keydown', { keyCode: keyCode }));
 
             $.InstantSearch.prototype.navigate.should.not.have.been.called;
           });
 
           it('does not complete', function () {
-            this.$instainput.keydown({ keyCode: keyCode });
+            this.$instainput.trigger($.Event('keydown', { keyCode: keyCode }));
 
             $.InstantSearch.prototype.complete.should.not.have.been.called;
           });
 
           it('does not trigger', function () {
-            this.$instainput.keydown({ keyCode: keyCode });
+            this.$instainput.trigger($.Event('keydown', { keyCode: keyCode }));
 
             $.InstantSearch.prototype.trigger.should.not.have.been.called;
           });
 
           it('does not search', function () {
-            this.$instainput.keydown({ keyCode: keyCode });
+            this.$instainput.trigger($.Event('keydown', { keyCode: keyCode }));
 
             $.InstantSearch.prototype.search.should.not.have.been.called;
           });
@@ -121,6 +121,47 @@ describe('instantsearch', function () {
       });
 
       describe('up', function () {
+
+        var keyCode = 38;
+
+        beforeEach(function () {
+          this.$input.instantSearch();
+          this.$instainput = $('.input');
+        });
+
+        afterEach(function () {
+          this.$instainput = null;
+        });
+
+        describe('and no results are displayed', function () {
+
+          it('does not highlight a result', function () {
+            this.$instainput.trigger($.Event('keydown', { keyCode: keyCode }));
+
+            $('.highlight').length.should.equal(0);
+          });
+
+        });
+
+        describe('and results are displayed', function () {
+
+          describe('and on first result', function () {
+          });
+
+          describe('and on last result', function () {
+          });
+
+        });
+
+        it('prevents default', function (done) {
+          this.$instainput.on('keydown', function (e) {
+            e.isDefaultPrevented().should.be.true;
+
+            done();
+          });
+          this.$instainput.trigger($.Event('keydown', { keyCode: keyCode }));
+        });
+
       });
 
       describe('right', function () {
