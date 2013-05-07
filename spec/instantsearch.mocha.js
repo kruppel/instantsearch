@@ -86,6 +86,12 @@ describe('instantsearch', function () {
             this.$instainput = null;
           });
 
+          it('does not set input value', function () {
+            this.$instainput.keydown({ keyCode: keyCode });
+
+            this.$instainput.val().should.be.empty;
+          });
+
           it('does not navigate', function () {
             this.$instainput.keydown({ keyCode: keyCode });
 
