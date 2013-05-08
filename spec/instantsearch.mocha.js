@@ -1,5 +1,67 @@
 describe('instantsearch', function () {
 
+  var STATES = [
+    'Alabama'
+  , 'Alaska'
+  , 'American Samoa'
+  , 'Arizona'
+  , 'Arkansas'
+  , 'California'
+  , 'Colorado'
+  , 'Connecticut'
+  , 'Delaware'
+  , 'District Of Columbia'
+  , 'Federated States Of Micronesia'
+  , 'Florida'
+  , 'Georgia'
+  , 'Guam'
+  , 'Hawaii'
+  , 'Idaho'
+  , 'Illinois'
+  , 'Indiana'
+  , 'Iowa'
+  , 'Kansas'
+  , 'Kentucky'
+  , 'Louisiana'
+  , 'Maine'
+  , 'Marshall Islands'
+  , 'Maryland'
+  , 'Massachusetts'
+  , 'Michigan'
+  , 'Minnesota'
+  , 'Mississippi'
+  , 'Missouri'
+  , 'Montana'
+  , 'Nebraska'
+  , 'Nevada'
+  , 'New Hampshire'
+  , 'New Jersey'
+  , 'New Mexico'
+  , 'New York'
+  , 'North Carolina'
+  , 'North Dakota'
+  , 'Northern Mariana Islands'
+  , 'Ohio'
+  , 'Oklahoma'
+  , 'Oregon'
+  , 'Palau'
+  , 'Pennsylvania'
+  , 'Puerto Rico'
+  , 'Rhode Island'
+  , 'South Carolina'
+  , 'South Dakota'
+  , 'Tennessee'
+  , 'Texas'
+  , 'Utah'
+  , 'Vermont'
+  , 'Virgin Islands'
+  , 'Virginia'
+  , 'Washington'
+  , 'West Virginia'
+  , 'Wisconsin'
+  , 'Wyoming'
+  ];
+
   beforeEach(function () {
     this.$sandbox = $('#sandbox');
 
@@ -17,7 +79,8 @@ describe('instantsearch', function () {
   describe('when initialized', function () {
 
     it('replaces input with instant search field', function () {
-      this.$input.instantSearch();
+      var is = this.$input.instantSearch();
+      debugger;
 
       $('#sandbox').html().should.equal(
         '<div class="instant-search-field"><input class="input" type="text" autocomplete="off" spellcheck="false" dir="ltr"><input class="ghost" disabled="" autocomplete="off"></div>'
@@ -124,16 +187,16 @@ describe('instantsearch', function () {
 
         var keyCode = 38;
 
-        beforeEach(function () {
-          this.$input.instantSearch();
-          this.$instainput = $('.input');
-        });
-
-        afterEach(function () {
-          this.$instainput = null;
-        });
-
         describe('and no results are displayed', function () {
+
+          beforeEach(function () {
+            this.$input.instantSearch();
+            this.$instainput = $('.input');
+          });
+
+          afterEach(function () {
+            this.$instainput = null;
+          });
 
           it('does not highlight a result', function () {
             this.$instainput.trigger($.Event('keydown', { keyCode: keyCode }));
@@ -145,6 +208,45 @@ describe('instantsearch', function () {
 
         describe('and results are displayed', function () {
 
+          beforeEach(function () {
+            this.$input.instantSearch({
+              source: function (req, res) {
+                var re = new RegExp(req.term, 'i'),
+                    results;
+
+                results = $.grep(STATES, function (state) {
+                  return state.match(re);
+                });
+
+                res(results, null);
+              }
+            });
+
+            this.$instainput = $('.input');
+            this.$results = $('.instant-search-results');
+
+            // "O" = 79
+            this.$instainput.val("O");
+            this.$instainput.trigger($.Event('keydown', { keyCode: 79 }));
+          });
+
+          afterEach(function () {
+            this.$results.remove();
+
+            this.$instainput = null;
+            this.$results = null;
+          });
+
+          describe('and without highlight', function () {
+
+            it('highlights last result', function () {
+              var results = this.$results.find('.result');
+
+              console.log(this.$results.html());
+            });
+
+          });
+
           describe('and on first result', function () {
           });
 
@@ -154,6 +256,8 @@ describe('instantsearch', function () {
         });
 
         it('prevents default', function (done) {
+          this.$input.instantSearch();
+          this.$instainput = $('.input');
           this.$instainput.on('keydown', function (e) {
             e.isDefaultPrevented().should.be.true;
 

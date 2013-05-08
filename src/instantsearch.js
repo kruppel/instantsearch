@@ -1,9 +1,9 @@
-/*!
-  * instantsearch: GOOGish autocomplete © Kurt Ruppel 2013
-  *
-  * https://github.com/kruppel/instantsearch
-  * LICENSE: MIT
-  */
+/**
+ * instantsearch: GOOGish autocomplete © Kurt Ruppel 2013
+ *
+ * https://github.com/kruppel/instantsearch
+ * LICENSE: MIT
+ */
 
 (function ($) {
 
@@ -60,17 +60,31 @@
     });
   };
 
+  /**
+   * jQuery InstantSearch object
+   *
+   * @constructor
+   *
+   * @param {jQuery} $el input element
+   * @param {object} options instantsearch options
+   * @param {function} options.source
+   * @param {function} options.action
+   * @param {boolean} options.closeOnBlur
+   * @param {boolean} options.completeOnEnter
+   * @param {boolean} options.showNoResults
+   */
   $.InstantSearch = function ($el, options) {
-    var self    = this
-      , id      = $el.attr('id')
-      , name    = $el.attr('name')
-      , classes = $el.attr('class');
+    var self = this
+      , el = $el[0]
+      , id = el.id
+      , name = el.name
+      , classes = el.className;
 
-    this.src             = options.source;
-    this.action          = options.action;
-    this.closeOnBlur     = options.closeOnBlur;
+    this.src = options.source;
+    this.action = options.action;
+    this.closeOnBlur = options.closeOnBlur;
     this.completeOnEnter = options.completeOnEnter;
-    this.showNoResults   = options.showNoResults;
+    this.showNoResults = options.showNoResults;
 
     this.$el = $(
       '<div class="instant-search-field">'+
@@ -275,9 +289,9 @@
       if (res.is(':hidden')) {
         res.css({
           position: 'absolute',
-          top:      this.$el.offset().top + this.$el.outerHeight(),
-          left:     this.$el.offset().left,
-          width:    this.$el.outerWidth()
+          top: this.$el.offset().top + this.$el.outerHeight(),
+          left: this.$el.offset().left,
+          width: this.$el.outerWidth()
         }).show();
       }
 
