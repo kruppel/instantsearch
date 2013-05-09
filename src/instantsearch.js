@@ -75,10 +75,11 @@
    */
   $.InstantSearch = function ($el, options) {
     var self = this
-      , el = $el[0]
-      , id = el.id
-      , name = el.name
-      , classes = el.className;
+      , input = $el[0]
+      , classes = input.className
+      , wrapper
+      , ghost
+      , res;
 
     this.src = options.source;
     this.action = options.action;
@@ -86,25 +87,42 @@
     this.completeOnEnter = options.completeOnEnter;
     this.showNoResults = options.showNoResults;
 
-    this.$el = $(
-      '<div class="instasearch-wrapper">'+
-      '<input class="instainput" type="text" autocomplete="off" spellcheck="false" dir="ltr">'+
-      '<input class="instaghost" disabled autocomplete="off">'+
-      '</div>'
-    );
-    $el.replaceWith(this.$el);
+    wrapper = document.createElement('div');
+    wrapper.className = 'instasearch-wrapper';
+    input.parentNode.insertBefore(wrapper, input);
+    wrapper.appendChild(input);
+    this.$el = $(wrapper);
 
-    this.$res = $(
-      '<div class="instaresults">' +
-      '<ul class="instalist"></ul>' +
-      '</div>'
-    ).hide().appendTo('body');
+    input.className = classes ? classes + ' instainput' : 'instainput';
+    input.setAttribute('autocomplete', 'off');
+    input.spellcheck = false;
+    this.$input = $el;
 
-    this.$input = this.$el.find('.instainput');
-    this.$input.attr({ id: id || null, name: name || null })
-               .addClass(classes);
+    ghost = document.createElement('input');
+    ghost.className = classes ? classes + ' instaghost' : 'instaghost';
+    ghost.setAttribute('autocomplete', 'off');
+    ghost.disabled = true;
+    wrapper.appendChild(ghost);
+    this.$ghost = $(ghost);
 
-    this.$ghost = this.$el.find('.instaghost');
+    function createResults() {
+      var fragment = document.createDocumentFragment()
+        , results = document.createElement('div')
+        , list = document.createElement('ul');
+
+      results.className = 'instaresults';
+      list.className = 'instalist';
+
+      results.appendChild(list);
+      results.style.display = 'none';
+      fragment.appendChild(results);
+
+      document.body.appendChild(results);
+
+      return results;
+    }
+    res = createResults();
+    this.$res = $(res);
 
     this.$input.on('keydown', function (e) {
       var keyCode = e.keyCode;

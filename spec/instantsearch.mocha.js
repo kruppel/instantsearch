@@ -82,7 +82,7 @@ describe('instantsearch', function () {
       var is = this.$input.instantSearch();
 
       $('#sandbox').html().should.equal(
-        '<div class="instasearch-wrapper"><input class="instainput" type="text" autocomplete="off" spellcheck="false" dir="ltr"><input class="instaghost" disabled="" autocomplete="off"></div>'
+        '<div class="instasearch-wrapper"><input class="instainput" autocomplete="off" spellcheck="false"><input class="instaghost" autocomplete="off" disabled=""></div>'
       );
     });
 
