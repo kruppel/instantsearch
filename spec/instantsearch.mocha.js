@@ -80,10 +80,9 @@ describe('instantsearch', function () {
 
     it('replaces input with instant search field', function () {
       var is = this.$input.instantSearch();
-      debugger;
 
       $('#sandbox').html().should.equal(
-        '<div class="instant-search-field"><input class="input" type="text" autocomplete="off" spellcheck="false" dir="ltr"><input class="ghost" disabled="" autocomplete="off"></div>'
+        '<div class="instasearch-wrapper"><input class="instainput" type="text" autocomplete="off" spellcheck="false" dir="ltr"><input class="instaghost" disabled="" autocomplete="off"></div>'
       );
     });
 
@@ -137,7 +136,7 @@ describe('instantsearch', function () {
             sinon.stub($.InstantSearch.prototype, 'search');
 
             this.$input.instantSearch();
-            this.$instainput = $('.input');
+            this.$instainput = $('.instainput');
           });
 
           afterEach(function () {
@@ -191,7 +190,7 @@ describe('instantsearch', function () {
 
           beforeEach(function () {
             this.$input.instantSearch();
-            this.$instainput = $('.input');
+            this.$instainput = $('.instainput');
           });
 
           afterEach(function () {
@@ -201,7 +200,7 @@ describe('instantsearch', function () {
           it('does not highlight a result', function () {
             this.$instainput.trigger($.Event('keydown', { keyCode: keyCode }));
 
-            $('.highlight').length.should.equal(0);
+            $('.instahighlight').length.should.equal(0);
           });
 
         });
@@ -222,8 +221,8 @@ describe('instantsearch', function () {
               }
             });
 
-            this.$instainput = $('.input');
-            this.$results = $('.instant-search-results');
+            this.$instainput = $('.instainput');
+            this.$results = $('.instaresults');
 
             // "O" = 79
             this.$instainput.val("O");
@@ -240,7 +239,7 @@ describe('instantsearch', function () {
           describe('and without highlight', function () {
 
             it('highlights last result', function () {
-              var results = this.$results.find('.result');
+              var results = this.$results.find('.instaresult');
 
               console.log(this.$results.html());
             });
@@ -257,7 +256,7 @@ describe('instantsearch', function () {
 
         it('prevents default', function (done) {
           this.$input.instantSearch();
-          this.$instainput = $('.input');
+          this.$instainput = $('.instainput');
           this.$instainput.on('keydown', function (e) {
             e.isDefaultPrevented().should.be.true;
 

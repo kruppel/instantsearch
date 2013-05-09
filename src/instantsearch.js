@@ -47,7 +47,7 @@
       , rest =  matchset[2] || '';
 
     this.guess = (start === '' && rest !== '') ? term + rest : '';
-    this.el = '<li class="result"><strong>' + start + '</strong>' + match + '<strong>' + rest + '</strong></li>';
+    this.el = '<li class="instaresult"><strong>' + start + '</strong>' + match + '<strong>' + rest + '</strong></li>';
   }
 
   $.fn.instantSearch = function (options) {
@@ -87,24 +87,24 @@
     this.showNoResults = options.showNoResults;
 
     this.$el = $(
-      '<div class="instant-search-field">'+
-      '<input class="input" type="text" autocomplete="off" spellcheck="false" dir="ltr">'+
-      '<input class="ghost" disabled autocomplete="off">'+
+      '<div class="instasearch-wrapper">'+
+      '<input class="instainput" type="text" autocomplete="off" spellcheck="false" dir="ltr">'+
+      '<input class="instaghost" disabled autocomplete="off">'+
       '</div>'
     );
     $el.replaceWith(this.$el);
 
     this.$res = $(
-      '<div class="instant-search-results">' +
-      '<ul class="list"></ul>' +
+      '<div class="instaresults">' +
+      '<ul class="instalist"></ul>' +
       '</div>'
     ).hide().appendTo('body');
 
-    this.$input = this.$el.find('.input');
-    this.$input.attr({ id: id, name: name })
+    this.$input = this.$el.find('.instainput');
+    this.$input.attr({ id: id || null, name: name || null })
                .addClass(classes);
 
-    this.$ghost = this.$el.find('.ghost');
+    this.$ghost = this.$el.find('.instaghost');
 
     this.$input.on('keydown', function (e) {
       var keyCode = e.keyCode;
@@ -175,8 +175,8 @@
       });
     }
 
-    this.$res.on('mouseenter', 'ul.list li.result', function (e) {
-      var items = self.$res.find('ul.list li.result')
+    this.$res.on('mouseenter', '.instalist .instaresult', function (e) {
+      var items = self.$res.find('.instalist .instaresult')
         , index = items.index(this);
 
       self.navigateTo(index);
@@ -233,7 +233,7 @@
   , showResults: function (data, showNoResults) {
       var self = this
         , res = this.$res
-        , list = res.find('ul.list')
+        , list = res.find('.instalist')
         , ghost = this.$ghost
         , val = this.$input.val()
         , len = data && data.length
@@ -257,7 +257,7 @@
 
         if (showNoResults && val !== '') {
           res.show();
-          list.append('<li class="no-results">No Results</li>');
+          list.append('<li class="instanone">No Results</li>');
         } else {
           res.hide();
           $body.off('keydown', onEscape);
@@ -299,7 +299,7 @@
     }
 
   , navigate: function (dir) {
-      var items = this.$res.find('ul.list li.result')
+      var items = this.$res.find('.instalist .instaresult')
         , sel;
 
       if (items.length === 0) return;
@@ -315,10 +315,10 @@
     }
 
   , navigateTo: function (sel) {
-      var items = this.$res.find('ul.list li.result');
+      var items = this.$res.find('.instalist .instaresult');
 
-      items.removeClass('highlight');
-      $(items[sel]).addClass('highlight');
+      items.removeClass('instahighlight');
+      $(items[sel]).addClass('instahighlight');
 
       if (sel === -1) {
         this.$input.val(this._val) && this.$ghost.val(this._rel);
