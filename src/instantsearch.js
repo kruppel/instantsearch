@@ -39,6 +39,44 @@
   , 126//f15
   ];
 
+  function wrapInput(input) {
+    var wrapper = document.createElement('div')
+      , classes = input.className;
+
+    wrapper.className = 'instasearch-wrapper';
+    input.parentNode.insertBefore(wrapper, input);
+    wrapper.appendChild(input);
+
+    input.className = classes ? classes + ' instainput' : 'instainput';
+    input.setAttribute('autocomplete', 'off');
+    input.spellcheck = false;
+
+    ghost = document.createElement('input');
+    ghost.className = classes ? classes + ' instaghost' : 'instaghost';
+    ghost.setAttribute('autocomplete', 'off');
+    ghost.disabled = true;
+    wrapper.appendChild(ghost);
+
+    return wrapper;
+  }
+
+  function insertResults() {
+    var fragment = document.createDocumentFragment()
+      , results = document.createElement('div')
+      , list = document.createElement('ul');
+
+    results.className = 'instaresults';
+    list.className = 'instalist';
+
+    results.appendChild(list);
+    results.style.display = 'none';
+    fragment.appendChild(results);
+
+    document.body.appendChild(results);
+
+    return results;
+  }
+
   function SearchResult(term, value) {
     var regex = new RegExp('(' + term + ')(.*)', 'i')
       , matchset = value.match(regex) || {}
@@ -76,10 +114,8 @@
   $.InstantSearch = function ($el, options) {
     var self = this
       , input = $el[0]
-      , classes = input.className
       , wrapper
-      , ghost
-      , res;
+      , results;
 
     this.src = options.source;
     this.action = options.action;
@@ -87,42 +123,13 @@
     this.completeOnEnter = options.completeOnEnter;
     this.showNoResults = options.showNoResults;
 
-    wrapper = document.createElement('div');
-    wrapper.className = 'instasearch-wrapper';
-    input.parentNode.insertBefore(wrapper, input);
-    wrapper.appendChild(input);
+    wrapper = wrapInput(input);
     this.$el = $(wrapper);
-
-    input.className = classes ? classes + ' instainput' : 'instainput';
-    input.setAttribute('autocomplete', 'off');
-    input.spellcheck = false;
     this.$input = $el;
+    this.$ghost = $(input.nextSibling);
 
-    ghost = document.createElement('input');
-    ghost.className = classes ? classes + ' instaghost' : 'instaghost';
-    ghost.setAttribute('autocomplete', 'off');
-    ghost.disabled = true;
-    wrapper.appendChild(ghost);
-    this.$ghost = $(ghost);
-
-    function createResults() {
-      var fragment = document.createDocumentFragment()
-        , results = document.createElement('div')
-        , list = document.createElement('ul');
-
-      results.className = 'instaresults';
-      list.className = 'instalist';
-
-      results.appendChild(list);
-      results.style.display = 'none';
-      fragment.appendChild(results);
-
-      document.body.appendChild(results);
-
-      return results;
-    }
-    res = createResults();
-    this.$res = $(res);
+    results = insertResults();
+    this.$res = $(results);
 
     this.$input.on('keydown', function (e) {
       var keyCode = e.keyCode;
