@@ -7,7 +7,9 @@
 
 (function ($) {
 
-  var listeners = {}
+  var indexOf
+    , bind
+    , listeners = {}
     , IGNORED_KEY_CODES;
 
   IGNORED_KEY_CODES = [
@@ -42,11 +44,30 @@
   , 126//f15
   ];
 
-  function bind(fn, context) {
+  indexOf = Array.prototype.indexOf || function(item, from) {
+    var i = from ? from : 0
+      , len = el.length
+      , inArray = false;
+
+    while (!inArray && i < len) {
+      if (this[i] === el) {
+        inArray = true;
+        return;
+      }
+
+      i++;
+    }
+
+    return inArray ? i : -1;
+  };
+
+  bind = Function.prototype.bind || function(context) {
+    var fn = this;
+
     return function () {
       fn.apply(context, arguments);
     };
-  }
+  };
 
   function wrapInput(input) {
     var wrapper = document.createElement('div')
@@ -77,7 +98,7 @@
     parentNode.insertBefore(input, wrapper);
     parentNode.removeChild(wrapper);
 
-    classes.splice(classes.indexOf('instainput'), 1);
+    classes.splice(indexOf.call(classes, 'instainput'), 1);
     input.className = classes.join(' ');
 
     return input;
@@ -103,7 +124,7 @@
   function onInput(e) {
     var keyCode = e.keyCode;
 
-    if (IGNORED_KEY_CODES.indexOf(keyCode) !== -1) return;
+    if (indexOf.call(IGNORED_KEY_CODES, keyCode) !== -1) return;
 
     switch(keyCode) {
 
@@ -194,16 +215,16 @@
   }
 
   function bindEvents() {
-    this.$input.on('keydown', bind(onInput, this));
-    this.$input.on('cut paste', bind(onCutPaste, this));
-    this.$input.on('blur', bind(onFocusOut, this));
-    this.$input.on('focus', bind(onFocusIn, this));
+    this.$input.on('keydown', bind.call(onInput, this));
+    this.$input.on('cut paste', bind.call(onCutPaste, this));
+    this.$input.on('blur', bind.call(onFocusOut, this));
+    this.$input.on('focus', bind.call(onFocusIn, this));
 
-    this.$res.on('mouseenter', '.instalist .instaresult', bind(onResultEnter, this));
-    this.$res.on('mouseleave', bind(onResultLeave, this));
-    this.$res.on('mousedown', bind(onSelected, this));
+    this.$res.on('mouseenter', '.instalist .instaresult', bind.call(onResultEnter, this));
+    this.$res.on('mouseleave', bind.call(onResultLeave, this));
+    this.$res.on('mousedown', bind.call(onSelected, this));
 
-    this.$input.on('instantsearch.destroy', bind(onDestroy, this));
+    this.$input.on('instantsearch.destroy', bind.call(onDestroy, this));
   }
 
   function unbindEvents() {
