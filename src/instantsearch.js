@@ -7,7 +7,10 @@
 
 (function ($) {
 
-  var IGNORED_KEY_CODES = [
+  var listeners = {}
+    , IGNORED_KEY_CODES;
+
+  IGNORED_KEY_CODES = [
     16//shift
   , 17//ctrl
   , 18//alt
@@ -39,6 +42,12 @@
   , 126//f15
   ];
 
+  function bind(fn, context) {
+    return function () {
+      fn.apply(context, arguments);
+    };
+  }
+
   function wrapInput(input) {
     var wrapper = document.createElement('div')
       , classes = input.className;
@@ -60,7 +69,21 @@
     return wrapper;
   }
 
-  function insertResults() {
+  function unwrapInput(input) {
+    var wrapper = input.parentNode
+      , parentNode = wrapper.parentNode
+      , classes = input.className.split(' ');
+
+    parentNode.insertBefore(input, wrapper);
+    parentNode.removeChild(wrapper);
+
+    classes.splice(classes.indexOf('instainput'), 1);
+    input.className = classes.join(' ');
+
+    return input;
+  }
+
+  function appendResults() {
     var fragment = document.createDocumentFragment()
       , results = document.createElement('div')
       , list = document.createElement('ul');
@@ -77,6 +100,116 @@
     return results;
   }
 
+  function onInput(e) {
+    var keyCode = e.keyCode;
+
+    if (IGNORED_KEY_CODES.indexOf(keyCode) !== -1) return;
+
+    switch(keyCode) {
+
+      // up
+      case 38:
+        this.navigate(-1);
+        e.preventDefault();
+        break;
+
+      // right
+      case 39:
+        this.complete();
+        break;
+
+      // down
+      case 40:
+        this.navigate(1);
+        e.preventDefault();
+        break;
+
+      // tab
+      case 9:
+        if (this.complete()) {
+          this.search();
+          e.preventDefault();
+        }
+        break;
+
+      // return
+      case 13:
+        if (this.completeOnEnter) {
+          this.complete();
+          this.trigger();
+        } else {
+          this.reset();
+          this.trigger();
+        }
+        e.preventDefault();
+        break;
+
+      // escape
+      case 27:
+        this.reset();
+        break;
+
+      default:
+        this.search();
+    }
+  }
+
+  function onCutPaste(e) {
+    this.search();
+  }
+
+  function onFocusOut(e) {
+    this.$input.trigger('instantsearch.blur', this);
+  }
+
+  function onFocusIn(e) {
+    this.$input.trigger('instantsearch.focus', this);
+  }
+
+  function onResultEnter(e) {
+    var results = this.$res.find('.instaresult')
+      , index = results.index(e.target);
+
+    this.navigateTo(index);
+  }
+
+  function onResultLeave(e) {
+    this.navigateTo(-1);
+  }
+
+  function onSelected(e) {
+    this.complete();
+    this.reset();
+    this.trigger();
+  }
+
+  function onDestroy() {
+    // XXX - unbind events
+    // XXX - restore input
+    this.$input.off('instantsearch.destroy');
+  }
+
+  function bindEvent() {
+    /* TO BE IMPLEMENTED */
+  }
+
+  function bindEvents() {
+    this.$input.on('keydown', bind(onInput, this));
+    this.$input.on('cut paste', bind(onCutPaste, this));
+    this.$input.on('blur', bind(onFocusOut, this));
+    this.$input.on('focus', bind(onFocusIn, this));
+
+    this.$res.on('mouseenter', '.instalist .instaresult', bind(onResultEnter, this));
+    this.$res.on('mouseleave', bind(onResultLeave, this));
+    this.$res.on('mousedown', bind(onSelected, this));
+
+    this.$input.on('instantsearch.destroy', bind(onDestroy, this));
+  }
+
+  function unbindEvents() {
+    /* TO BE IMPLEMENTED */
+  }
+
   function SearchResult(term, value) {
     var regex = new RegExp('(' + term + ')(.*)', 'i')
       , matchset = value.match(regex) || {}
@@ -89,10 +222,13 @@
   }
 
   $.fn.instantSearch = function (options) {
-    var opts = $.extend({}, options);
+    var opts = $.extend({}, options)
+      , destroy = options === 'destroy';
 
     return this.each(function () {
       var $this = $(this);
+
+      if (destroy) return $this.trigger('instantsearch.destroy');
 
       $this.data('instantsearch', new $.InstantSearch($this, opts));
     });
@@ -128,94 +264,10 @@
     this.$input = $el;
     this.$ghost = $(input.nextSibling);
 
-    results = insertResults();
+    results = appendResults();
     this.$res = $(results);
 
-    this.$input.on('keydown', function (e) {
-      var keyCode = e.keyCode;
-
-      if (IGNORED_KEY_CODES.indexOf(keyCode) !== -1) return;
-
-      switch(keyCode) {
-
-        // up
-        case 38:
-          self.navigate(-1);
-          e.preventDefault();
-          break;
-
-        // right
-        case 39:
-          self.complete();
-          break;
-
-        // down
-        case 40:
-          self.navigate(1);
-          e.preventDefault();
-          break;
-
-        // tab
-        case 9:
-          if (self.complete()) {
-            self.search();
-            e.preventDefault();
-          }
-          break;
-
-        // return
-        case 13:
-          if (self.completeOnEnter) {
-            self.complete();
-            self.trigger();
-          } else {
-            self.reset();
-            self.trigger();
-          }
-          e.preventDefault();
-          break;
-
-        // escape
-        case 27:
-          self.reset();
-          break;
-
-        default:
-          self.search();
-      }
-
-    });
-
-    this.$input.on('cut paste', function (e) {
-      self.search();
-    });
-
-    if (this.closeOnBlur) {
-      this.$input.on('blur', function (e) {
-        self.reset();
-      });
-
-      this.$input.on('focus', function (e) {
-        self.search();
-      });
-    }
-
-    this.$res.on('mouseenter', '.instalist .instaresult', function (e) {
-      var items = self.$res.find('.instalist .instaresult')
-        , index = items.index(this);
-
-      self.navigateTo(index);
-    });
-
-    this.$res.on('mouseleave', function (e) {
-      self.navigateTo(-1);
-    });
-
-    this.$res.on('mousedown', function (e) {
-      self.complete();
-      self.reset();
-      self.trigger();
-    });
+    bindEvents.call(this);
   };
 
   $.InstantSearch.prototype = {
