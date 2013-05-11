@@ -7,9 +7,9 @@
 
 (function ($) {
 
-  var indexOf
+  var listeners = {}
+    , indexOf
     , bind
-    , listeners = {}
     , IGNORED_KEY_CODES;
 
   IGNORED_KEY_CODES = [
@@ -204,31 +204,64 @@
     this.trigger();
   }
 
-  function onDestroy() {
-    // XXX - unbind events
-    // XXX - restore input
-    this.$input.off('instantsearch.destroy');
+  function onEscape(e) {
+    e.keyCode === 27 && this.reset();
   }
 
-  function bindEvent() {
-    /* TO BE IMPLEMENTED */
+  function onDestroy() {
+    unbindEvents();
+    unwrapInput(this.$input[0]);
+  }
+
+  function bindEvent($el, type, selector, fn) {
+    var bound,
+        tagName;
+
+    if (!fn) {
+      fn = selector;
+      selector = undefined;
+    }
+
+    bound = bind.call(fn, this);
+    tagName = $el[0].tagName;
+    $el.on(type, selector, bound);
+
+    !listeners[tagName] && (listeners[tagName] = {});
+    listeners[tagName][type] = [$el, selector, bound];
   }
 
   function bindEvents() {
-    this.$input.on('keydown', bind.call(onInput, this));
-    this.$input.on('cut paste', bind.call(onCutPaste, this));
-    this.$input.on('blur', bind.call(onFocusOut, this));
-    this.$input.on('focus', bind.call(onFocusIn, this));
+    bindEvent.call(this, this.$input, 'keydown', onInput);
+    bindEvent.call(this, this.$input, 'cut paste', onCutPaste);
+    bindEvent.call(this, this.$input, 'blur', onFocusOut);
+    bindEvent.call(this, this.$input, 'focus', onFocusIn);
 
-    this.$res.on('mouseenter', '.instalist .instaresult', bind.call(onResultEnter, this));
-    this.$res.on('mouseleave', bind.call(onResultLeave, this));
-    this.$res.on('mousedown', bind.call(onSelected, this));
+    bindEvent.call(this, this.$res, 'mouseenter', '.instaresult', onResultEnter);
+    bindEvent.call(this, this.$res, 'mouseleave', onResultLeave);
+    bindEvent.call(this, this.$res, 'mousedown', onSelected);
 
-    this.$input.on('instantsearch.destroy', bind.call(onDestroy, this));
+    bindEvent.call(this, this.$input, 'instantsearch.destroy', onDestroy);
+  }
+
+  function unbindEvent(tagName, type) {
+    var store = listeners[tagName][type];
+
+    store && store[0].off(type, store[1], store[2]);
+    listeners[tagName][type] = null;
   }
 
   function unbindEvents() {
-    /* TO BE IMPLEMENTED */
+    var tagName
+      , list
+      , type;
+
+    for (tagName in listeners) {
+      list = listeners[tagName];
+
+      for (type in list) {
+        unbindEvent(tagName, type);
+      }
+    }
   }
 
   function SearchResult(term, value) {
@@ -249,7 +282,9 @@
     return this.each(function () {
       var $this = $(this);
 
-      if (destroy) return $this.trigger('instantsearch.destroy');
+      $this.trigger('instantsearch.destroy');
+
+      if (destroy) return;
 
       $this.data('instantsearch', new $.InstantSearch($this, opts));
     });
@@ -338,7 +373,6 @@
         , $body = $('body')
         , i = 0
         , content = ''
-        , onEscape
         , result
         , guess;
 
@@ -358,15 +392,13 @@
           list.append('<li class="instanone">No Results</li>');
         } else {
           res.hide();
-          $body.off('keydown', onEscape);
+          unbindEvent($body[0].tagName, 'keydown');
         }
 
         return false;
       }
 
-      $('body').on('keydown', onEscape = function (e) {
-        e.keyCode === 27 && self.reset();
-      });
+      bindEvent.call(this, $body, 'keydown', onEscape);
 
       for (; i < len; i++) {
         result = new SearchResult(val, data[i]);
