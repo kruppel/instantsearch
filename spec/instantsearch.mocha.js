@@ -70,6 +70,7 @@ describe('instantsearch', function () {
   });
 
   afterEach(function () {
+    this.$input.trigger('instantsearch.destroy');
     this.$sandbox.empty();
 
     this.$sandbox = null;
@@ -78,12 +79,44 @@ describe('instantsearch', function () {
 
   describe('when initialized', function () {
 
-    it('replaces input with instant search field', function () {
-      var is = this.$input.instantSearch();
+    describe('in wrapping input', function () {
 
-      $('#sandbox').html().should.equal(
-        '<div class="instasearch-wrapper"><input class="instainput" autocomplete="off" spellcheck="false"><input class="instaghost" autocomplete="off" disabled=""></div>'
-      );
+      it('wraps input in a div', function () {
+        this.$input.instantSearch();
+
+        this.$input[0].parentNode.className.should.equal('instasearch-wrapper');
+      });
+
+      it('adds .instainput class to input', function () {
+        this.$input.addClass('test');
+        this.$input.instantSearch();
+
+        this.$input[0].className.should.equal('test instainput');
+      });
+
+      it('sets input autocomplete to \'off\'', function () {
+        this.$input.instantSearch();
+
+        this.$input.attr('autocomplete').should.equal('off');
+      });
+
+      it('creates a ghost input', function () {
+        this.$input.addClass('test');
+        this.$input.instantSearch();
+
+        this.$input.next()[0].className.should.equal('test instaghost');
+      });
+
+    });
+
+    describe('in appending results container to body', function () {
+
+      it('initially hides results', function () {
+        this.$input.instantSearch();
+
+        $('.instaresults').css('display').should.equal('none');
+      });
+
     });
 
   });
@@ -305,6 +338,9 @@ describe('instantsearch', function () {
   });
 
   describe('when mousedown event fires on search results', function () {
+  });
+
+  describe('when destroyed', function () {
   });
 
 });
