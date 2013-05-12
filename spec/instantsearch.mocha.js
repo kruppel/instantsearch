@@ -219,20 +219,6 @@ describe('instantsearch', function () {
 
         var keyCode = 38;
 
-        describe('and no results are displayed', function () {
-
-          beforeEach(function () {
-            this.$input.instantSearch();
-          });
-
-          it('does not highlight a result', function () {
-            this.$instainput.trigger($.Event('keydown', { keyCode: keyCode }));
-
-            $('.instahighlight').length.should.equal(0);
-          });
-
-        });
-
         describe('and results are displayed', function () {
 
           beforeEach(function (ready) {
@@ -457,6 +443,130 @@ describe('instantsearch', function () {
       });
 
       describe('down', function () {
+
+        var keyCode = 40;
+
+        describe('and results are displayed', function () {
+
+          beforeEach(function (ready) {
+            this.$input.instantSearch({
+              source: function (req, res) {
+                var re = new RegExp(req.term, 'i'),
+                    results;
+
+                results = $.grep(STATES, function (state) {
+                  return state.match(re);
+                });
+
+                res(results, null);
+              }
+            });
+
+            this.$ghost = this.$input.next();
+            this.$results = $('.instaresults');
+
+            this.$input.on('instantsearch.search', function (data) {
+              ready();
+            });
+            /**
+             * "c" (67) then "O" (79)
+             *
+             * Results:
+             *    [
+             *      'Colorado'
+             *    , 'Connecticut'
+             *    , 'District Of Columbia'
+             *    , 'New Mexico'
+             *    , 'Puerto Rico'
+             *    , 'Wisconsin'
+             *    ]
+             */
+            this.$input.val('cO');
+            this.$input.trigger($.Event('keydown', { keyCode: 79 }));
+          });
+
+          afterEach(function () {
+            this.$results.remove();
+
+            this.$instainput = null;
+            this.$results = null;
+          });
+
+          describe('and without highlight', function () {
+
+            beforeEach(function () {
+              this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
+            });
+
+            it('highlights first result', function () {
+              this.$results.find('.instahighlight').text().should.equal('Colorado');
+            });
+
+            it('sets input to first result', function () {
+              this.$input.val().should.equal('Colorado');
+            });
+
+            it('sets ghost to empty string', function () {
+              this.$ghost.val().should.equal('');
+            });
+
+          });
+
+          describe('and on first result', function () {
+
+            beforeEach(function () {
+              this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
+              this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
+            });
+
+            it('highlights second result', function () {
+              this.$results.find('.instahighlight').text().should.equal('Connecticut');
+            });
+
+            it('sets input to second result', function () {
+              this.$input.val().should.equal('Connecticut');
+            });
+
+            it('sets ghost to empty string', function () {
+              this.$ghost.val().should.equal('');
+            });
+
+          });
+
+          describe('and on last result', function () {
+
+            beforeEach(function () {
+              this.$input.trigger($.Event('keydown', { keyCode: 38 }));
+              this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
+            });
+
+            it('does not highlight any results', function () {
+              this.$results.find('.instahighlight').length.should.equal(0);
+            });
+
+            it('does not change input value', function () {
+              this.$input.val().should.equal('cO');
+            });
+
+            it('sets ghost value to \'cOlorado\'', function () {
+              this.$ghost.val().should.equal('cOlorado');
+            });
+
+          });
+
+        });
+
+        it('prevents default', function (done) {
+          this.$input.instantSearch();
+          this.$instainput = $('.instainput');
+          this.$instainput.on('keydown', function (e) {
+            e.isDefaultPrevented().should.be.true;
+
+            done();
+          });
+          this.$instainput.trigger($.Event('keydown', { keyCode: keyCode }));
+        });
+
       });
 
       describe('tab', function () {
