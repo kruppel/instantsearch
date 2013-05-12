@@ -126,34 +126,34 @@ describe('instantsearch', function () {
     describe('and key code is', function () {
 
       var IGNORED_KEY_CODES = {
-        'shift': 16,
-        'ctrl': 17,
-        'alt': 18,
-        'pause/break': 19,
-        'caps lock': 20,
-        'page up': 33,
-        'page down': 34,
-        'end': 35,
-        'home': 36,
-        'left': 37,
-        'insert': 45,
-        'windows key/cmd': 91,
-        'select': 93,
-        'f1': 112,
-        'f2': 113,
-        'f3': 114,
-        'f4': 115,
-        'f5': 116,
-        'f6': 117,
-        'f7': 118,
-        'f8': 119,
-        'f9': 120,
-        'f10': 121,
-        'f11': 122,
-        'f12': 123,
-        'f13': 124,
-        'f14': 125,
-        'f15': 126
+        'shift': 16
+      , 'ctrl': 17
+      , 'alt': 18
+      , 'pause/break': 19
+      , 'caps lock': 20
+      , 'page up': 33
+      , 'page down': 34
+      , 'end': 35
+      , 'home': 36
+      , 'left': 37
+      , 'insert': 45
+      , 'windows key/cmd': 91
+      , 'select': 93
+      , 'f1': 112
+      , 'f2': 113
+      , 'f3': 114
+      , 'f4': 115
+      , 'f5': 116
+      , 'f6': 117
+      , 'f7': 118
+      , 'f8': 119
+      , 'f9': 120
+      , 'f10': 121
+      , 'f11': 122
+      , 'f12': 123
+      , 'f13': 124
+      , 'f14': 125
+      , 'f15': 126
       };
 
       $.each(IGNORED_KEY_CODES, function (key, val) {
@@ -223,11 +223,6 @@ describe('instantsearch', function () {
 
           beforeEach(function () {
             this.$input.instantSearch();
-            this.$instainput = $('.instainput');
-          });
-
-          afterEach(function () {
-            this.$instainput = null;
           });
 
           it('does not highlight a result', function () {
@@ -240,7 +235,7 @@ describe('instantsearch', function () {
 
         describe('and results are displayed', function () {
 
-          beforeEach(function () {
+          beforeEach(function (ready) {
             this.$input.instantSearch({
               source: function (req, res) {
                 var re = new RegExp(req.term, 'i'),
@@ -254,12 +249,27 @@ describe('instantsearch', function () {
               }
             });
 
-            this.$instainput = $('.instainput');
+            this.$ghost = this.$input.next();
             this.$results = $('.instaresults');
 
-            // "O" = 79
-            this.$instainput.val("O");
-            this.$instainput.trigger($.Event('keydown', { keyCode: 79 }));
+            this.$input.on('instantsearch.search', function (data) {
+              ready();
+            });
+            /**
+             * "c" (67) then "O" (79)
+             *
+             * Results:
+             *    [
+             *      'Colorado'
+             *    , 'Connecticut'
+             *    , 'District Of Columbia'
+             *    , 'New Mexico'
+             *    , 'Puerto Rico'
+             *    , 'Wisconsin'
+             *    ]
+             */
+            this.$input.val('cO');
+            this.$input.trigger($.Event('keydown', { keyCode: 79 }));
           });
 
           afterEach(function () {
@@ -271,18 +281,64 @@ describe('instantsearch', function () {
 
           describe('and without highlight', function () {
 
-            it('highlights last result', function () {
-              var results = this.$results.find('.instaresult');
+            beforeEach(function () {
+              this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
+            });
 
-              console.log(this.$results.html());
+            it('highlights last result', function () {
+              this.$results.find('.instahighlight').text().should.equal('Wisconsin');
+            });
+
+            it('sets input to last result', function () {
+              this.$input.val().should.equal('Wisconsin');
+            });
+
+            it('sets ghost to empty string', function () {
+              this.$ghost.val().should.equal('');
             });
 
           });
 
           describe('and on first result', function () {
+
+            beforeEach(function () {
+              this.$input.trigger($.Event('keydown', { keyCode: 40 }));
+              this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
+            });
+
+            it('does not highlight any results', function () {
+              this.$results.find('.instahighlight').length.should.equal(0);
+            });
+
+            it('does not change input value', function () {
+              this.$input.val().should.equal('cO');
+            });
+
+            it('sets ghost value to \'cOlorado\'', function () {
+              this.$ghost.val().should.equal('cOlorado');
+            });
+
           });
 
           describe('and on last result', function () {
+
+            beforeEach(function () {
+              this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
+              this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
+            });
+
+            it('highlights second to last result', function () {
+              this.$results.find('.instahighlight').text().should.equal('Puerto Rico');
+            });
+
+            it('sets input to second to last result', function () {
+              this.$input.val().should.equal('Puerto Rico');
+            });
+
+            it('sets ghost to empty string', function () {
+              this.$ghost.val().should.equal('');
+            });
+
           });
 
         });
@@ -301,6 +357,103 @@ describe('instantsearch', function () {
       });
 
       describe('right', function () {
+
+        var keyCode = 39;
+
+        describe('and results are displayed', function () {
+
+          beforeEach(function () {
+            this.$input.instantSearch({
+              source: function (req, res) {
+                var re = new RegExp(req.term, 'i'),
+                    results;
+
+                results = $.grep(STATES, function (state) {
+                  return state.match(re);
+                });
+
+                res(results, null);
+              }
+            });
+
+            this.$ghost = this.$input.next();
+            this.$results = $('.instaresults');
+          });
+
+          afterEach(function () {
+            this.$results.remove();
+
+            this.$instainput = null;
+            this.$results = null;
+          });
+
+          describe('and beginning of input value matches top result', function () {
+
+            beforeEach(function (ready) {
+              var self = this;
+
+              this.$input.on('instantsearch.search', function (data) {
+                self.$input.trigger($.Event('keydown', { keyCode: keyCode }));
+                ready();
+              });
+              /**
+               * "c" (67) then "A" (65) then "l" (76)
+               *
+               * Results:
+               *    [
+               *      'California'
+               *    ]
+               */
+              this.$input.val('cAl');
+              this.$input.trigger($.Event('keydown', { keyCode: 76 }));
+            });
+
+            it('completes input value', function () {
+              this.$input.val().should.equal('California');
+            });
+
+            it('sets ghost value to empty string', function () {
+              this.$ghost.val().should.equal('');
+            });
+
+          });
+
+          describe('and beginning of input value does not match top result', function () {
+
+            beforeEach(function (ready) {
+              var self = this;
+
+              this.$input.on('instantsearch.search', function (data) {
+                self.$input.trigger($.Event('keydown', { keyCode: keyCode }));
+                ready();
+              });
+              /**
+               * "c" (67) then "A" (65)
+               *
+               * Results:
+               *    [
+               *      'American Samoa'
+               *    , 'California'
+               *    , 'North Carolina'
+               *    , 'South Carolina'
+               *    ]
+               */
+              this.$input.val('cA');
+              this.$input.trigger($.Event('keydown', { keyCode: 65 }));
+            });
+
+            it('does not complete input value', function () {
+              this.$input.val().should.equal('cA');
+            });
+
+            it('does not change ghost value', function () {
+              this.$ghost.val().should.equal('');
+            });
+
+          });
+
+        });
+
       });
 
       describe('down', function () {
