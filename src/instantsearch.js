@@ -308,7 +308,6 @@
    * @param {object} options instantsearch options
    * @param {function} options.source
    * @param {function} options.action
-   * @param {boolean} options.closeOnBlur
    * @param {boolean} options.completeOnEnter
    * @param {boolean} options.showNoResults
    */
@@ -320,7 +319,6 @@
 
     this.src = options.source;
     this.action = options.action;
-    this.closeOnBlur = options.closeOnBlur;
     this.completeOnEnter = options.completeOnEnter;
     this.showNoResults = options.showNoResults;
 
