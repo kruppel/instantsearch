@@ -219,6 +219,7 @@
   function onDestroy() {
     unbindEvents();
     unwrapInput(this.$input[0]);
+    document.body.removeChild(this.$res[0]);
   }
 
   function bindEvent($el, type, selector, fn) {
@@ -367,7 +368,7 @@
 
           self._data = data;
           self.showResults(data, self.showNoResults);
-          self.$input.trigger('instantsearch.search', data);
+          self.$input.trigger({ type: 'instantsearch.search', results: data });
         });
       }, 0);
     }
