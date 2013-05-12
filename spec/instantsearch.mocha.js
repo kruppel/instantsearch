@@ -62,6 +62,17 @@ describe('instantsearch', function () {
   , 'Wyoming'
   ];
 
+  function getStates(req, res) {
+    var re = new RegExp(req.term, 'i'),
+        results;
+
+    results = $.grep(STATES, function (state) {
+      return state.match(re);
+    });
+
+    res(results, null);
+  }
+
   beforeEach(function () {
     this.$sandbox = $('#sandbox');
 
@@ -223,16 +234,7 @@ describe('instantsearch', function () {
 
           beforeEach(function (ready) {
             this.$input.instantSearch({
-              source: function (req, res) {
-                var re = new RegExp(req.term, 'i'),
-                    results;
-
-                results = $.grep(STATES, function (state) {
-                  return state.match(re);
-                });
-
-                res(results, null);
-              }
+              source: getStates
             });
 
             this.$ghost = this.$input.next();
@@ -350,16 +352,7 @@ describe('instantsearch', function () {
 
           beforeEach(function () {
             this.$input.instantSearch({
-              source: function (req, res) {
-                var re = new RegExp(req.term, 'i'),
-                    results;
-
-                results = $.grep(STATES, function (state) {
-                  return state.match(re);
-                });
-
-                res(results, null);
-              }
+              source: getStates
             });
 
             this.$ghost = this.$input.next();
@@ -450,16 +443,7 @@ describe('instantsearch', function () {
 
           beforeEach(function (ready) {
             this.$input.instantSearch({
-              source: function (req, res) {
-                var re = new RegExp(req.term, 'i'),
-                    results;
-
-                results = $.grep(STATES, function (state) {
-                  return state.match(re);
-                });
-
-                res(results, null);
-              }
+              source: getStates
             });
 
             this.$ghost = this.$input.next();
