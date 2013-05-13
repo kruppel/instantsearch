@@ -7,8 +7,7 @@
 
 (function ($) {
 
-  var listeners = {}
-    , indexOf
+  var indexOf
     , bind
     , IGNORED_KEY_CODES;
 
@@ -165,11 +164,11 @@
       case 13:
         if (this.completeOnEnter) {
           this.complete();
-          this.trigger();
         } else {
           this.reset();
-          this.trigger();
         }
+
+        this.select();
         e.preventDefault();
         break;
 
@@ -209,7 +208,7 @@
   function onSelected(e) {
     this.complete();
     this.reset();
-    this.trigger();
+    this.select();
   }
 
   function onEscape(e) {
@@ -217,14 +216,15 @@
   }
 
   function onDestroy() {
-    unbindEvents();
+    unbindEvents.call(this);
     unwrapInput(this.$input[0]);
     document.body.removeChild(this.$res[0]);
   }
 
   function bindEvent($el, type, selector, fn) {
-    var bound,
-        tagName;
+    var listeners = this._listeners
+      , bound
+      , tagName;
 
     if (!fn) {
       fn = selector;
@@ -253,14 +253,16 @@
   }
 
   function unbindEvent(tagName, type) {
-    var store = listeners[tagName][type];
+    var listeners = this._listeners
+      , store = listeners[tagName][type];
 
     store && store[0].off(type, store[1], store[2]);
     listeners[tagName][type] = null;
   }
 
   function unbindEvents() {
-    var tagName
+    var listeners = this._listeners
+      , tagName
       , list
       , type;
 
@@ -268,7 +270,7 @@
       list = listeners[tagName];
 
       for (type in list) {
-        unbindEvent(tagName, type);
+        unbindEvent.call(this, tagName, type);
       }
     }
   }
@@ -335,7 +337,11 @@
 
   $.InstantSearch.prototype = {
 
-    _rel: ''
+    _listeners: {}
+
+  , _q: []
+
+  , _rel: ''
 
   , _sel: -1
 
@@ -345,6 +351,7 @@
       this._tid && clearTimeout(this._tid);
       this._tid = setTimeout(function () {
         var q = self._val = self.$input.val()
+          , qid
           , part;
 
         if (q === '') return self.showResults();
@@ -361,8 +368,19 @@
           self.$ghost.val('');
         }
 
+        qid = (new Date()).getTime() + q;
+        self._q.push(qid);
         self.src({ term: q }, function (data, err) {
+          var index;
+
           if (err) throw new Error(err);
+
+          index = indexOf.call(self._q, qid);
+          if (index === -1) {
+            return;
+          } else {
+            self._q = self._q.slice(index + 1);
+          }
 
           self._data = data;
           self.showResults(data, self.showNoResults);
@@ -384,10 +402,6 @@
         , result
         , guess;
 
-      // Don't show results again if value hasn't changed
-      if (val === this._triggeredValue) { return; }
-      this._triggeredValue = null;
-
       list.empty();
 
       this._sel = -1;
@@ -400,7 +414,7 @@
           list.append('<li class="instanone">No Results</li>');
         } else {
           res.hide();
-          unbindEvent($body[0].tagName, 'keydown');
+          unbindEvent.call(this, $body[0].tagName, 'keydown');
         }
 
         return false;
@@ -484,18 +498,13 @@
       }
     }
 
-  , valueIsInList: function (value) {
-      return this._data && $.inArray(value, this._data) !== -1;
-    }
+  , select: function () {
+      this._q = [];
 
-  , trigger: function () {
-      var value = this._triggeredValue = this.$input.val();
-
-      if (this.action) {
-        this.action.call(this, value);
-      } else {
-        this.$el.parent('form').submit();
-      }
+      this.$input.trigger({
+        type: 'instantsearch.selected'
+      , selected: this.$input.val()
+      });
     }
 
   };
