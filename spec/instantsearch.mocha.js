@@ -911,6 +911,52 @@ describe('instantsearch', function () {
       });
 
       describe('escape', function () {
+
+        var keyCode = 27;
+
+        describe('and results are displayed', function () {
+
+          beforeEach(function () {
+            var self = this;
+
+            this.$input.instantSearch({
+              source: getStates
+            });
+
+            this.$ghost = this.$input.next();
+            this.$results = $('.instaresults');
+            /**
+             * "c" (67) then "A" (65) then "l" (76)
+             *
+             * Results:
+             *    [
+             *      'California'
+             *    ]
+             */
+            this.$input.val('cAl');
+            this.$input.trigger($.Event('keydown', { keyCode: 76 }));
+            this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
+          });
+
+          afterEach(function () {
+            this.$ghost = null;
+            this.$results = null;
+          });
+
+          it('does not complete input value', function () {
+            this.$input.val().should.equal('cAl');
+          });
+
+          it('clears ghost value', function () {
+            this.$ghost.val().should.equal('');
+          });
+
+          it('clears results', function () {
+            this.$results.find('ul').html().should.equal('');
+          });
+
+        });
+
       });
 
     });
