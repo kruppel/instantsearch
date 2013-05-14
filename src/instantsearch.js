@@ -254,9 +254,12 @@
 
   function unbindEvent(tagName, type) {
     var listeners = this._listeners
-      , store = listeners[tagName][type];
+      , byTagName = listeners[tagName]
+      , store = byTagName && listeners[tagName][type];
 
-    store && store[0].off(type, store[1], store[2]);
+    if (!store) return;
+
+    store[0].off(type, store[1], store[2]);
     listeners[tagName][type] = null;
   }
 
