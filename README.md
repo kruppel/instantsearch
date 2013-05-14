@@ -8,5 +8,5 @@ the dynamics of the GOOG search bar UI.
 * ~~wrap input instead of replacing~~
 * ~~implement destroy~~
 * ~~emit events from input~~
-* change trigger entirely to be an event emitter
-* refactor constructor, also add better tests for constructor
+* ~~change trigger entirely to be an event emitter~~
+* ~~refactor constructor, also add better tests for constructor~~
