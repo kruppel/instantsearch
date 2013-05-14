@@ -227,6 +227,105 @@ describe('instantsearch', function () {
 
         var keyCode = 38;
 
+        describe('and results are not displayed', function () {
+
+          describe('and not set to `showNoResults`', function () {
+
+            beforeEach(function (ready) {
+              this.$input.instantSearch({
+                source: getStates
+              });
+
+              this.$ghost = this.$input.next();
+              this.$results = $('.instaresults');
+
+              this.$input.on('instantsearch.search', function (e) {
+                var $this = $(this);
+
+                $this.off('instantsearch.search');
+                $this.trigger($.Event('keydown', { keyCode: keyCode }));
+
+                ready();
+              });
+              /**
+               * "c" (67) then 6 "o"s then "O" (79)
+               *
+               * Results:
+               *    []
+               */
+              this.$input.val('cooooooO');
+              this.$input.trigger($.Event('keydown', { keyCode: 79 }));
+            });
+
+            afterEach(function () {
+              this.$ghost = null;
+              this.$results = null;
+            });
+
+            it('hides results', function () {
+              this.$results.is(':hidden').should.be.true;
+            });
+
+            it('does not display any items', function () {
+              this.$results.find('li').length.should.equal(0);
+            });
+
+            it('does not highlight an item', function () {
+              this.$results.find('.instahighlight').length.should.equal(0);
+            });
+
+          });
+
+          describe('and set to `showNoResults`', function () {
+
+            beforeEach(function (ready) {
+              this.$input.instantSearch({
+                source: getStates
+              , showNoResults: true
+              });
+
+              this.$ghost = this.$input.next();
+              this.$results = $('.instaresults');
+
+              this.$input.on('instantsearch.search', function (e) {
+                var $this = $(this);
+
+                $this.off('instantsearch.search');
+                $this.trigger($.Event('keydown', { keyCode: keyCode }));
+
+                ready();
+              });
+              /**
+               * "c" (67) then 6 "o"s then "O" (79)
+               *
+               * Results:
+               *    []
+               */
+              this.$input.val('cooooooO');
+              this.$input.trigger($.Event('keydown', { keyCode: 79 }));
+            });
+
+            afterEach(function () {
+              this.$ghost = null;
+              this.$results = null;
+            });
+
+            it('displays results', function () {
+              this.$results.is(':hidden').should.be.false;
+            });
+
+            it('displays \'No Results\' item', function () {
+              this.$results.find('.instanone').text().should.equal('No Results');
+            });
+
+            it('does not highlight the \'No Results\' item', function () {
+              this.$results.find('.instahighlight').length.should.equal(0);
+            });
+
+          });
+
+        });
+
         describe('and results are displayed', function () {
 
           beforeEach(function (ready) {
@@ -260,6 +359,7 @@ describe('instantsearch', function () {
           });
 
           afterEach(function () {
+            this.$ghost = null;
             this.$results = null;
           });
 
@@ -916,7 +1016,7 @@ describe('instantsearch', function () {
 
         describe('and results are displayed', function () {
 
-          beforeEach(function () {
+          beforeEach(function (ready) {
             var self = this;
 
             this.$input.instantSearch({
@@ -925,6 +1025,13 @@ describe('instantsearch', function () {
 
             this.$ghost = this.$input.next();
             this.$results = $('.instaresults');
+            this.$input.on('instantsearch.search', function (e) {
+              $this = $(this);
+              $this.off('instantsearch.search');
+              $this.trigger($.Event('keydown', { keyCode: keyCode }));
+
+              ready();
+            });
             /**
              * "c" (67) then "A" (65) then "l" (76)
              *
@@ -935,7 +1042,6 @@ describe('instantsearch', function () {
              */
             this.$input.val('cAl');
             this.$input.trigger($.Event('keydown', { keyCode: 76 }));
-            this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
           });
 
           afterEach(function () {
