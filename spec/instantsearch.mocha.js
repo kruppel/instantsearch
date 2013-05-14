@@ -825,6 +825,85 @@ describe('instantsearch', function () {
           });
 
           describe('and not set to `completeOnEnter`', function () {
+
+            beforeEach(function () {
+              this.$input.instantSearch({
+                source: getStates
+              });
+
+              this.$ghost = this.$input.next();
+              this.$results = $('.instaresults');
+            });
+
+            afterEach(function () {
+              this.$ghost = null;
+              this.$results = null;
+            });
+
+            describe('and beginning of input value matches top result', function () {
+
+              beforeEach(function (ready) {
+                var self = this
+                  , checkDefault;
+
+                this.$input.on('instantsearch.search', function (e) {
+                  var $this = $(this);
+
+                  $this.on('instantsearch.selected', function (e) {
+                    self.selected = e.selected;
+                  });
+                  $this.trigger($.Event('keydown', { keyCode: keyCode }));
+                });
+                /**
+                 * "a" (65) then "R" (82) then "O" (79)
+                 *
+                 * Results:
+                 *    [
+                 *      'North Carolina'
+                 *    , 'South Carolina'
+                 *    ]
+                 */
+                this.$input.val('aRO');
+                this.$input.trigger($.Event('keydown', { keyCode: 79 }));
+                this.$input.on('keydown', checkDefault = function (e) {
+                  $(this).off('keydown', checkDefault);
+
+                  self.defaultPrevented = e.isDefaultPrevented();
+
+                  ready();
+                });
+              });
+
+              afterEach(function () {
+                this.$input.off('instantsearch.search');
+                this.$input.off('instantsearch.selected');
+
+                this.selected = null;
+                this.defaultPrevented = null;
+              });
+
+              it('does not complete input value', function () {
+                this.$input.val().should.equal('aRO');
+              });
+
+              it('does not change ghost value', function () {
+                this.$ghost.val().should.equal('');
+              });
+
+              it('clears results', function () {
+                this.$results.find('ul').html().should.equal('');
+              });
+
+              it('selects input value', function () {
+                this.selected.should.equal('aRO');
+              });
+
+              it('prevents default', function () {
+                this.defaultPrevented.should.be.true;
+              });
+
+            });
+
           });
 
         });
