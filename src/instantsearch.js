@@ -443,10 +443,10 @@
 
       if (res.is(':hidden')) {
         res.css({
-          position: 'absolute',
-          top: this.$el.offset().top + this.$el.outerHeight(),
-          left: this.$el.offset().left,
-          width: this.$el.outerWidth()
+          position: 'absolute'
+        , top: this.$el.offset().top + this.$el.outerHeight()
+        , left: this.$el.offset().left
+        , width: this.$el.outerWidth()
         }).show();
       }
 
