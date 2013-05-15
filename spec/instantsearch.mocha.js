@@ -167,65 +167,7 @@ describe('instantsearch', function () {
       , 'f15': 126
       };
 
-      $.each(IGNORED_KEY_CODES, function (key, val) {
-
-        var keyCode = IGNORED_KEY_CODES[key];
-
-        describe(key, function () {
-
-          beforeEach(function () {
-            sinon.stub($.InstantSearch.prototype, 'navigate');
-            sinon.stub($.InstantSearch.prototype, 'complete');
-            sinon.stub($.InstantSearch.prototype, 'select');
-            sinon.stub($.InstantSearch.prototype, 'search');
-
-            this.$input.instantSearch();
-          });
-
-          afterEach(function () {
-            $.InstantSearch.prototype.navigate.restore();
-            $.InstantSearch.prototype.complete.restore();
-            $.InstantSearch.prototype.select.restore();
-            $.InstantSearch.prototype.search.restore();
-          });
-
-          it('does not set input value', function () {
-            this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
-
-            this.$input.val().should.be.empty;
-          });
-
-          it('does not navigate', function () {
-            this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
-
-            $.InstantSearch.prototype.navigate.should.not.have.been.called;
-          });
-
-          it('does not complete', function () {
-            this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
-
-            $.InstantSearch.prototype.complete.should.not.have.been.called;
-          });
-
-          it('does not trigger', function () {
-            this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
-
-            $.InstantSearch.prototype.select.should.not.have.been.called;
-          });
-
-          it('does not search', function () {
-            this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
-
-            $.InstantSearch.prototype.search.should.not.have.been.called;
-          });
-
-        });
-
-      });
-
-      describe('up', function () {
-
-        var keyCode = 38;
+      function itShowsNoResults(keyCode, hidesResults) {
 
         describe('and results are not displayed', function () {
 
@@ -310,21 +252,95 @@ describe('instantsearch', function () {
               this.$results = null;
             });
 
-            it('displays results', function () {
-              this.$results.is(':hidden').should.be.false;
-            });
+            if (hidesResults) {
 
-            it('displays \'No Results\' item', function () {
-              this.$results.find('.instanone').text().should.equal('No Results');
-            });
+              it('hides results', function () {
+                this.$results.is(':hidden').should.be.true;
+              });
 
-            it('does not highlight the \'No Results\' item', function () {
-              this.$results.find('.instahighlight').length.should.equal(0);
-            });
+            } else {
+
+              it('displays results', function () {
+                this.$results.is(':hidden').should.be.false;
+              });
+
+              it('displays \'No Results\' item', function () {
+                this.$results.find('.instanone').text().should.equal('No Results');
+              });
+
+              it('does not highlight the \'No Results\' item', function () {
+                this.$results.find('.instahighlight').length.should.equal(0);
+              });
+
+            }
 
           });
 
         });
+
+      }
+
+      $.each(IGNORED_KEY_CODES, function (key, val) {
+
+        var keyCode = IGNORED_KEY_CODES[key];
+
+        describe(key, function () {
+
+          beforeEach(function () {
+            sinon.stub($.InstantSearch.prototype, 'navigate');
+            sinon.stub($.InstantSearch.prototype, 'complete');
+            sinon.stub($.InstantSearch.prototype, 'select');
+            sinon.stub($.InstantSearch.prototype, 'search');
+
+            this.$input.instantSearch();
+          });
+
+          afterEach(function () {
+            $.InstantSearch.prototype.navigate.restore();
+            $.InstantSearch.prototype.complete.restore();
+            $.InstantSearch.prototype.select.restore();
+            $.InstantSearch.prototype.search.restore();
+          });
+
+          it('does not set input value', function () {
+            this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
+
+            this.$input.val().should.be.empty;
+          });
+
+          it('does not navigate', function () {
+            this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
+
+            $.InstantSearch.prototype.navigate.should.not.have.been.called;
+          });
+
+          it('does not complete', function () {
+            this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
+
+            $.InstantSearch.prototype.complete.should.not.have.been.called;
+          });
+
+          it('does not trigger', function () {
+            this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
+
+            $.InstantSearch.prototype.select.should.not.have.been.called;
+          });
+
+          it('does not search', function () {
+            this.$input.trigger($.Event('keydown', { keyCode: keyCode }));
+
+            $.InstantSearch.prototype.search.should.not.have.been.called;
+          });
+
+        });
+
+      });
+
+      describe('up', function () {
+
+        var keyCode = 38;
+
+        itShowsNoResults(keyCode);
 
         describe('and results are displayed', function () {
 
@@ -443,6 +459,8 @@ describe('instantsearch', function () {
 
         var keyCode = 39;
 
+        itShowsNoResults(keyCode);
+
         describe('and results are displayed', function () {
 
           beforeEach(function () {
@@ -535,6 +553,8 @@ describe('instantsearch', function () {
       describe('down', function () {
 
         var keyCode = 40;
+
+        itShowsNoResults(keyCode);
 
         describe('and results are displayed', function () {
 
@@ -652,6 +672,8 @@ describe('instantsearch', function () {
       describe('tab', function () {
 
         var keyCode = 9;
+
+        itShowsNoResults(keyCode);
 
         describe('and results are displayed', function () {
 
@@ -787,6 +809,8 @@ describe('instantsearch', function () {
       describe('return', function () {
 
         var keyCode = 13;
+
+        itShowsNoResults(keyCode, true);
 
         describe('and results are displayed', function () {
 
@@ -1014,6 +1038,8 @@ describe('instantsearch', function () {
 
         var keyCode = 27;
 
+        itShowsNoResults(keyCode, true);
+
         describe('and results are displayed', function () {
 
           beforeEach(function (ready) {
@@ -1059,6 +1085,10 @@ describe('instantsearch', function () {
 
           it('clears results', function () {
             this.$results.find('ul').html().should.equal('');
+          });
+
+          it('hides results', function () {
+            this.$results.is(':hidden').should.be.true;
           });
 
         });
