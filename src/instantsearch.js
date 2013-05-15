@@ -334,6 +334,7 @@
 
     results = appendResults();
     this.$res = $(results);
+    this.$list = this.$res.find('.instalist');
 
     bindEvents.call(this);
   };
@@ -357,7 +358,7 @@
           , qid
           , part;
 
-        if (q === '') return self.showResults();
+        if (q === '') return self.reset();
 
         part = self._rel.slice(0, q.length);
 
@@ -386,46 +387,31 @@
           }
 
           self._data = data;
-          self.showResults(data, self.showNoResults);
+          self.showResults(data);
           self.$input.trigger({ type: 'instantsearch.search', results: data });
         });
       }, 0);
     }
 
-  , showResults: function (data, showNoResults) {
-      var self = this
-        , res = this.$res
-        , list = res.find('.instalist')
-        , ghost = this.$ghost
+  , showResults: function (data) {
+      var ghost = this.$ghost
         , val = this.$input.val()
-        , len = data && data.length
-        , $body = $('body')
-        , i = 0
         , content = ''
+        , i
+        , len
         , result
         , guess;
 
-      list.empty();
-
-      this._sel = -1;
-
-      if (val === '' || !data || data.length === 0) {
-        ghost.val('');
-
-        if (showNoResults && val !== '') {
-          res.show();
-          list.append('<li class="instanone">No Results</li>');
-        } else {
-          res.hide();
-          unbindEvent.call(this, $body[0].tagName, 'keydown');
-        }
-
-        return false;
+      if (val === '') {
+        return this.reset();
+      } else if (!data || !data.length) {
+        return this.showNone();
       }
 
-      bindEvent.call(this, $body, 'keydown', onEscape);
+      this.reset();
+      bindEvent.call(this, $(document.body), 'keydown', onEscape);
 
-      for (; i < len; i++) {
+      for (i = 0, len = data.length; i < len; i++) {
         result = new SearchResult(val, data[i]);
 
         //
@@ -439,10 +425,10 @@
         content += result.el;
       }
 
-      list.append(content);
+      this.$list.append(content);
 
-      if (res.is(':hidden')) {
-        res.css({
+      if (this.$res.is(':hidden')) {
+        this.$res.css({
           position: 'absolute'
         , top: this.$el.offset().top + this.$el.outerHeight()
         , left: this.$el.offset().left
@@ -470,7 +456,7 @@
     }
 
   , navigateTo: function (sel) {
-      var items = this.$res.find('.instalist .instaresult');
+      var items = this.$list.find('.instaresult');
 
       items.removeClass('instahighlight');
       $(items[sel]).addClass('instahighlight');
@@ -484,8 +470,30 @@
       this._sel = sel;
     }
 
-  , reset: function () {
-      this.showResults(null);
+  , showNone: function () {
+      if (this.showNoResults) {
+        this.reset(true);
+        this.$list.append(
+          '<li class="instanone">No Results</li>'
+        );
+      } else {
+        this.reset();
+      }
+
+      return false;
+    }
+
+  , reset: function (showOrHide) {
+      var $res = this.$res;
+
+      this.$ghost.val('');
+      this.$list.empty();
+      this._sel = -1;
+      this.$res.toggle(!!showOrHide);
+
+      unbindEvent.call(this, document.body.tagName, 'keydown');
+
+      return false;
     }
 
   , complete: function () {
