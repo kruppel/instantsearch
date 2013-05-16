@@ -1,0 +1,13 @@
+.banner {
+  background: url(../img/instantsearch.svg) no-repeat;
+  background-size: 100%;
+  height: 80px;
+  margin: 150px auto;
+  width: 350px;
+}
+
+#container {
+  margin: 0 auto;
+  padding: 0 25px;
+  width: 750px;
+}
