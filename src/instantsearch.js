@@ -312,7 +312,6 @@
    * @param {jQuery} $el input element
    * @param {object} options instantsearch options
    * @param {function} options.source
-   * @param {function} options.action
    * @param {boolean} options.completeOnEnter
    * @param {boolean} options.showNoResults
    */
@@ -323,7 +322,6 @@
       , results;
 
     this.src = options.source;
-    this.action = options.action;
     this.completeOnEnter = options.completeOnEnter;
     this.showNoResults = options.showNoResults;
 
@@ -380,13 +378,11 @@
           if (err) throw new Error(err);
 
           index = indexOf.call(self._q, qid);
-          if (index === -1) {
-            return;
-          } else {
-            self._q = self._q.slice(index + 1);
-          }
+          if (index === -1) return;
 
+          self._q = self._q.slice(index + 1);
           self._data = data;
+
           self.showResults(data);
           self.$input.trigger({ type: 'instantsearch.search', results: data });
         });
@@ -440,7 +436,7 @@
     }
 
   , navigate: function (dir) {
-      var items = this.$res.find('.instalist .instaresult')
+      var items = this.$list.find('.instaresult')
         , sel;
 
       if (items.length === 0) return;
@@ -490,6 +486,7 @@
       this.$list.empty();
       this._sel = -1;
       this.$res.toggle(!!showOrHide);
+      !showOrHide && this.$input.trigger('instantsearch.reset');
 
       unbindEvent.call(this, document.body.tagName, 'keydown');
 
