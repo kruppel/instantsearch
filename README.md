@@ -11,6 +11,6 @@ the dynamics of the GOOG search bar UI.
 * ~~change trigger entirely to be an event emitter~~
 * ~~refactor constructor, also add better tests for constructor~~
 * ~~complete tests for showNoResults~~
-* refactor showNoResults once better tests are in place (separate
-  concerns between reset and empty states)
+* ~~refactor showNoResults once better tests are in place (separate
+  concerns between reset and empty states)~~
 * optimize string matching
