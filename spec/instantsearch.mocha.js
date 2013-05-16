@@ -1043,8 +1043,6 @@ describe('instantsearch', function () {
         describe('and results are displayed', function () {
 
           beforeEach(function (ready) {
-            var self = this;
-
             this.$input.instantSearch({
               source: getStates
             });
@@ -1100,15 +1098,120 @@ describe('instantsearch', function () {
   });
 
   describe('when cut event fires', function () {
+
+    beforeEach(function (ready) {
+      this.$input.instantSearch({
+        source: getStates
+      , showNoResults: true
+      });
+
+      this.$ghost = this.$input.next();
+      this.$results = $('.instaresults');
+      this.$input.on('instantsearch.search', function (e) {
+        $this = $(this);
+
+        $this.off('instantsearch.search');
+        $this.on('instantsearch.reset', function (e) {
+          $this.off('instantsearch.reset');
+          ready();
+        });
+        $this.val('');
+        $this.trigger('cut');
+      });
+      /**
+       * "M" (77) then "i" (73) then "n" (78)
+       *
+       * Results:
+       *    [
+       *      'Minnesota'
+       *    , 'Wyoming'
+       *    ]
+       */
+      this.$input.val('Min');
+      this.$input.trigger($.Event('keydown', { keyCode: 78 }));
+    });
+
+    afterEach(function () {
+      this.$ghost = null;
+      this.$results = null;
+    });
+
+    it('does not complete input value', function () {
+      this.$input.val().should.equal('');
+    });
+
+    it('clears ghost value', function () {
+      this.$ghost.val().should.equal('');
+    });
+
+    it('hides results', function () {
+      this.$results.is(':hidden').should.equal(true);
+    });
+
   });
 
-  describe('when copy event fires', function () {
+  // Unable to get a paste event to fire in phantomjs
+  if (!window.mochaPhantomJS) {
+
+    describe('when paste event fires', function () {
+
+      beforeEach(function (ready) {
+        this.$input.instantSearch({
+          source: getStates
+        , showNoResults: true
+        });
+
+        this.$ghost = this.$input.next();
+        this.$results = $('.instaresults');
+        this.$input.on('instantsearch.search', function (e) {
+          $this = $(this);
+
+          $this.off('instantsearch.search');
+          /**
+           * "M" (77) then "i" (73) then "n" (78)
+           *
+           * Results:
+           *    [
+           *      'Minnesota'
+           *    , 'Wyoming'
+           *    ]
+           */
+          $this.val('Min');
+          $this.trigger($.Event('keydown', { keyCode: 78 }));
+          $this.on('instantsearch.search', function (e) {
+            ready();
+          });
+          $this.trigger('paste');
+        });
+      });
+
+      afterEach(function () {
+        this.$input.off('instantsearch.search');
+
+        this.$ghost = null;
+        this.$results = null;
+      });
+
+      it('does not change input value', function () {
+        this.$input.val().should.equal('Min');
+      });
+
+      it('sets ghost value', function () {
+        this.$ghost.val().should.equal('Minnesota');
+      });
+
+      it('displays results', function () {
+        this.$results.is(':hidden').should.equal(false);
+      });
+
+    });
+
+  }
+
+  describe('when input is blurred', function () {
   });
 
-  describe('when close on blur option is set to true', function () {
-  });
-
-  describe('when close on blur option is set to false', function () {
+  describe('when input is focused', function () {
   });
 
   describe('when mouse enters search result', function () {
