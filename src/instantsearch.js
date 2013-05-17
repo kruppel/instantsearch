@@ -187,11 +187,11 @@
   }
 
   function onFocusOut(e) {
-    this.$input.trigger('instantsearch.blur', this);
+    this.$input.trigger({ type: 'instantsearch.blur' }, this);
   }
 
   function onFocusIn(e) {
-    this.$input.trigger('instantsearch.focus', this);
+    this.$input.trigger({ type: 'instantsearch.focus' }, this);
   }
 
   function onResultEnter(e) {

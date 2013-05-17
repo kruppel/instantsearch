@@ -1209,15 +1209,57 @@ describe('instantsearch', function () {
   }
 
   describe('when input is blurred', function () {
+
+    beforeEach(function () {
+      this.$input.instantSearch();
+    });
+
+    it('triggers an `instantsearch.blur` event', function () {
+      this.$input.focus();
+      this.$input.on('instantsearch.blur', function (e, instasearch) {
+        instasearch.should.be.instanceOf($.InstantSearch);
+      });
+      this.$input.blur();
+    });
+
   });
 
   describe('when input is focused', function () {
+
+    beforeEach(function () {
+      this.$input.instantSearch();
+    });
+
+    it('triggers an `instantsearch.focus` event', function () {
+      this.$input.on('instantsearch.focus', function (e, instasearch) {
+        instasearch.should.be.instanceOf($.InstantSearch);
+      });
+      this.$input.focus();
+    });
+
   });
 
   describe('when mouse enters search result', function () {
+
+    it('completes input value', function () {
+    });
+
+    it('sets ghost to empty string', function () {
+    });
+
+    it('highlights search result', function () {
+    });
+
   });
 
   describe('when mouse leaves search result', function () {
+
+    it('sets input to previous value', function () {
+    });
+
+    it('sets ghost value to \'\'', function () {
+    });
+
   });
 
   describe('when mousedown event fires on search results', function () {
