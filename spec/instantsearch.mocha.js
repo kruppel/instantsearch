@@ -1241,23 +1241,116 @@ describe('instantsearch', function () {
 
   describe('when mouse enters search result', function () {
 
+    beforeEach(function (ready) {
+      var self = this;
+
+      this.$input.instantSearch({
+        source: getStates
+      });
+
+      this.$ghost = this.$input.next();
+      this.$results = $('.instaresults');
+      this.$input.on('instantsearch.search', function (e) {
+        $(this).off('instantsearch.search');
+
+        $(self.$results.find('.instaresult')[3]).trigger('mouseenter');
+
+        ready();
+      });
+
+      /**
+       * "c" (67) then "O" (79)
+       *
+       * Results:
+       *    [
+       *      'Colorado'
+       *    , 'Connecticut'
+       *    , 'District Of Columbia'
+       *    , 'New Mexico'
+       *    , 'Puerto Rico'
+       *    , 'Wisconsin'
+       *    ]
+       */
+      this.$input.val('cO');
+      this.$input.trigger($.Event('keydown', { keyCode: 79 }));
+    });
+
+    afterEach(function () {
+      this.$input.off('instantsearch.search');
+
+      this.$ghost = null;
+      this.$results = null;
+    });
+
     it('completes input value', function () {
+      this.$input.val().should.equal('New Mexico');
     });
 
     it('sets ghost to empty string', function () {
+      this.$ghost.val().should.equal('');
     });
 
     it('highlights search result', function () {
+      this.$results.find('.instahighlight').index().should.equal(3);
     });
 
   });
 
   describe('when mouse leaves search result', function () {
 
-    it('sets input to previous value', function () {
+    beforeEach(function (ready) {
+      var self = this;
+
+      this.$input.instantSearch({
+        source: getStates
+      });
+
+      this.$ghost = this.$input.next();
+      this.$results = $('.instaresults');
+      this.$input.on('instantsearch.search', function (e) {
+        var $result = $(self.$results.find('.instaresult')[2]);
+
+        $(this).off('instantsearch.search');
+        $result.trigger('mouseenter');
+        $result.trigger('mouseleave');
+
+        ready();
+      });
+
+      /**
+       * "c" (67) then "O" (79)
+       *
+       * Results:
+       *    [
+       *      'Colorado'
+       *    , 'Connecticut'
+       *    , 'District Of Columbia'
+       *    , 'New Mexico'
+       *    , 'Puerto Rico'
+       *    , 'Wisconsin'
+       *    ]
+       */
+      this.$input.val('cO');
+      this.$input.trigger($.Event('keydown', { keyCode: 79 }));
     });
 
-    it('sets ghost value to \'\'', function () {
+    afterEach(function () {
+      this.$input.off('instantsearch.search');
+
+      this.$ghost = null;
+      this.$results = null;
+    });
+
+    it('sets input to previous value', function () {
+      this.$input.val().should.equal('cO');
+    });
+
+    it('sets ghost value to \'cOlorado\'', function () {
+      this.$ghost.val().should.equal('cOlorado');
+    });
+
+    it('does not highlight search result', function () {
+      this.$results.find('.instahighlight').length.should.equal(0);
     });
 
   });
