@@ -1419,6 +1419,41 @@ describe('instantsearch', function () {
   });
 
   describe('when destroyed', function () {
+
+    it('unbinds keydown event', function () {
+    });
+
+    it('unbinds cut event', function () {
+    });
+
+    it('unbinds paste event', function () {
+    });
+
+    it('unbinds blur event', function () {
+    });
+
+    it('unbinds focus event', function () {
+    });
+
+    it('unbinds destroy event', function () {
+    });
+
+    it('unbinds body keydown event', function () {
+    });
+
+    describe('in unwrapping input', function () {
+
+      it('restores input with original class names', function () {
+      });
+
+      it('removes wrapping div', function () {
+      });
+
+    });
+
+    it('removes results from body', function () {
+    });
+
   });
 
 });
