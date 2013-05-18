@@ -1356,6 +1356,66 @@ describe('instantsearch', function () {
   });
 
   describe('when mousedown event fires on search results', function () {
+
+    beforeEach(function (ready) {
+      var self = this;
+
+      this.$input.instantSearch({
+        source: getStates
+      });
+
+      this.$ghost = this.$input.next();
+      this.$results = $('.instaresults');
+      this.$input.on('instantsearch.search', function (e) {
+        var $result = $(self.$results.find('.instaresult')[1])
+          , $this = $(this);
+
+        $this.off('instantsearch.search');
+        $this.on('instantsearch.selected', function (e) {
+          $this.off('instantsearch.selected');
+          self.selected = e.selected;
+
+          ready();
+        });
+        $result.trigger('mouseenter');
+        $result.trigger('mousedown');
+      });
+
+      /**
+       * "c" (67) then "A" (65)
+       *
+       * Results:
+       *    [
+       *      'American Samoa'
+       *    , 'California'
+       *    , 'North Carolina'
+       *    , 'South Carolina'
+       *    ]
+       */
+      this.$input.val('cA');
+      this.$input.trigger($.Event('keydown', { keyCode: 65 }));
+    });
+
+    afterEach(function () {
+      this.$input.off('instantsearch.search');
+
+      this.$ghost = null;
+      this.$results = null;
+      this.selected = null;
+    });
+
+    it('completes input value', function () {
+      this.$input.val().should.equal('California');
+    });
+
+    it('clears results', function () {
+      this.$results.find('ul').html().should.equal('');
+    });
+
+    it('selects completed input value', function () {
+      this.selected.should.equal('California');
+    });
+
   });
 
   describe('when destroyed', function () {
