@@ -77,6 +77,7 @@ describe('instantsearch', function () {
     this.$sandbox = $('#sandbox');
 
     this.$input = $('<input>');
+    this.$input[0].className = 'test';
     this.$input.appendTo('#sandbox');
   });
 
@@ -1150,64 +1151,6 @@ describe('instantsearch', function () {
 
   });
 
-  // Unable to get a paste event to fire in phantomjs
-  if (!window.mochaPhantomJS) {
-
-    describe('when paste event fires', function () {
-
-      beforeEach(function (ready) {
-        this.$input.instantSearch({
-          source: getStates
-        , showNoResults: true
-        });
-
-        this.$ghost = this.$input.next();
-        this.$results = $('.instaresults');
-        this.$input.on('instantsearch.search', function (e) {
-          $this = $(this);
-
-          $this.off('instantsearch.search');
-          /**
-           * "M" (77) then "i" (73) then "n" (78)
-           *
-           * Results:
-           *    [
-           *      'Minnesota'
-           *    , 'Wyoming'
-           *    ]
-           */
-          $this.val('Min');
-          $this.trigger($.Event('keydown', { keyCode: 78 }));
-          $this.on('instantsearch.search', function (e) {
-            ready();
-          });
-          $this.trigger('paste');
-        });
-      });
-
-      afterEach(function () {
-        this.$input.off('instantsearch.search');
-
-        this.$ghost = null;
-        this.$results = null;
-      });
-
-      it('does not change input value', function () {
-        this.$input.val().should.equal('Min');
-      });
-
-      it('sets ghost value', function () {
-        this.$ghost.val().should.equal('Minnesota');
-      });
-
-      it('displays results', function () {
-        this.$results.is(':hidden').should.equal(false);
-      });
-
-    });
-
-  }
-
   describe('when input is blurred', function () {
 
     beforeEach(function () {
@@ -1420,38 +1363,126 @@ describe('instantsearch', function () {
 
   describe('when destroyed', function () {
 
+    beforeEach(function () {
+      sinon.spy($.InstantSearch.prototype, 'reset');
+      sinon.spy($.InstantSearch.prototype, 'search');
+
+      this.$input.instantSearch({
+        source: getStates
+      });
+    });
+
+    afterEach(function () {
+      $.InstantSearch.prototype.reset.restore();
+      $.InstantSearch.prototype.search.restore();
+
+      this.$input.off('instantsearch');
+    });
+
     it('unbinds keydown event', function () {
+      this.$input.instantSearch('destroy');
+      this.$input.trigger($.Event('keydown', { keyCode: 65 }));
+
+      $.InstantSearch.prototype.search.should.not.have.been.called;
     });
 
     it('unbinds cut event', function () {
+      this.$input.instantSearch('destroy');
+      this.$input.trigger('cut');
+
+      $.InstantSearch.prototype.search.should.not.have.been.called;
     });
 
-    it('unbinds paste event', function () {
+    it('unbinds blur event', function (done) {
+      var blurred = false;
+
+      this.$input.on('instantsearch.blur', function () {
+        blurred = true;
+      });
+      this.$input.focus();
+      this.$input.instantSearch('destroy');
+      this.$input.blur();
+      setTimeout(function () {
+        blurred.should.be.false;
+
+        done();
+      }, 0);
     });
 
-    it('unbinds blur event', function () {
+    it('unbinds focus event', function (done) {
+      var focused = false;
+
+      this.$input.on('instantsearch.focus', function () {
+        focused = true;
+      });
+      this.$input.instantSearch('destroy');
+      this.$input.focus();
+      setTimeout(function () {
+        focused.should.be.false;
+
+        done();
+      }, 0);
     });
 
-    it('unbinds focus event', function () {
-    });
+    it('unbinds body keydown event', function (done) {
+      this.$input.on('instantsearch.search', function (e) {
+        var $this = $(this);
 
-    it('unbinds destroy event', function () {
-    });
+        $this.off('instantsearch.search');
+        $this.instantSearch('destroy');
+        $.InstantSearch.prototype.reset.reset();
+        $('body').trigger($.Event('keydown', { keyCode: 27 }));
+        $.InstantSearch.prototype.reset.should.not.have.been.called;
 
-    it('unbinds body keydown event', function () {
+        done();
+      });
+
+      /**
+       * "c" (67) then "A" (65)
+       *
+       * Results:
+       *    [
+       *      'American Samoa'
+       *    , 'California'
+       *    , 'North Carolina'
+       *    , 'South Carolina'
+       *    ]
+       */
+      this.$input.val('cA');
+      this.$input.trigger($.Event('keydown', { keyCode: 65 }));
     });
 
     describe('in unwrapping input', function () {
 
       it('restores input with original class names', function () {
+        this.$input.instantSearch('destroy');
+
+        this.$input[0].className.should.equal('test');
+      });
+
+      it('restores input to original position in DOM', function () {
+        var wrapper = this.$input.parent()
+          , parent = wrapper.parent();
+
+        this.$input.instantSearch('destroy');
+
+        this.$input.parent()[0].should.equal(parent[0]);
       });
 
       it('removes wrapping div', function () {
+        var wrapper = this.$input.parent();
+
+        this.$input.instantSearch('destroy');
+
+        wrapper.closest('html').length.should.equal(0);
       });
 
     });
 
     it('removes results from body', function () {
+      this.$input.instantSearch('destroy');
+
+      $('.instaresults').length.should.equal(0);
     });
 
   });
