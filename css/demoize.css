@@ -1,8 +1,12 @@
+* {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
 .banner {
   background: url(../img/instantsearch.svg) no-repeat;
   background-size: 100%;
   height: 80px;
-  margin: 150px auto;
+  margin: 150px auto 80px auto;
   width: 350px;
 }
 
@@ -10,4 +14,71 @@
   margin: 0 auto;
   padding: 0 25px;
   width: 750px;
+}
+
+.instasearch-wrapper {
+  border: 1px solid #D9D9D9;
+  border-top: 1px solid silver;
+  -webkit-border-radius: 1px;
+     -moz-border-radius: 1px;
+          border-radius: 1px;
+  height: 27px;
+  margin: 0 auto;
+  position: relative;
+  width: 50%;
+}
+
+.instasearch-wrapper input {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  height: 19px;
+  left: 5px;
+  margin: 0px;
+  outline: none;
+  overflow: hidden;
+  padding: 0px 2px;
+  position: absolute;
+  top: 4px;
+  width: 100%;
+}
+
+.instasearch-wrapper > .instainput {
+  color: black;
+  z-index: 1;
+}
+
+.instasearch-wrapper > .instaghost {
+  color: silver;
+  -webkit-text-fill-color: silver;
+  z-index: 0;
+}
+
+.instaresults {
+  background-color: white;
+  margin-top: -1px
+  z-index: 2;
+}
+
+.instaresults > .instalist {
+  border: 1px solid #CCC;
+  -webkit-box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+     -moz-box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.instalist > .instaresult {
+  display: block;
+  line-height: 22px;
+  list-style: none;
+  overflow: hidden;
+  padding: 0 10px;
+  white-space: hidden;
+}
+
+.instaresults .instahighlight {
+  background-color: rgb(238,238,238);
 }

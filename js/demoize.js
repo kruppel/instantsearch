@@ -1,3 +1,3 @@
 (function (window, undefined) {
-  $('.seach').instantSearch();
+  $('.search').instantSearch();
 }(window));
