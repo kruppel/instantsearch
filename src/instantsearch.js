@@ -279,7 +279,8 @@
   }
 
   function SearchResult(term, value) {
-    var regex = new RegExp('(' + term + ')(.*)', 'i')
+    var escaped = term.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+      , regex = new RegExp('(' + escaped + ')(.*)', 'i')
       , matchset = value.match(regex) || {}
       , start = value.substr(0, matchset.index)
       , match = matchset[1] || ''
