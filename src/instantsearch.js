@@ -9,7 +9,8 @@
 
   var indexOf
     , bind
-    , IGNORED_KEY_CODES;
+    , IGNORED_KEY_CODES
+    , SearchResult;
 
   IGNORED_KEY_CODES = [
     16//shift
@@ -278,8 +279,8 @@
     }
   }
 
-  function SearchResult(term, value) {
-    var escaped = term.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+  $.InstantResult = SearchResult = function(term, value) {
+    var escaped = term.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
       , regex = new RegExp('(' + escaped + ')(.*)', 'i')
       , matchset = value.match(regex) || {}
       , start = value.substr(0, matchset.index)
@@ -288,7 +289,7 @@
 
     this.guess = (start === '' && rest !== '') ? term + rest : '';
     this.el = '<li class="instaresult"><strong>' + start + '</strong>' + match + '<strong>' + rest + '</strong></li>';
-  }
+  };
 
   $.fn.instantSearch = function (options) {
     var opts = $.extend({}, options)

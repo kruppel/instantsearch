@@ -1,4 +1,4 @@
-describe('instantsearch', function () {
+describe('$.fn.instantsearch', function () {
 
   var STATES = [
     'Alabama'

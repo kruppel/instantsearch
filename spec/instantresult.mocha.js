@@ -1,0 +1,2 @@
+describe('$.InstantResult', function () {
+});
