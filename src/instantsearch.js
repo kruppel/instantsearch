@@ -121,8 +121,24 @@
     return results;
   }
 
+  function getCaretPosition(input) {
+    var pos = 0
+      , sel;
+
+    if (document.selection) {
+      sel = document.selection.createRange();
+      sel.moveStart('character', -input.value.length);
+      pos = sel.text.length;
+    } else {
+      pos = input.selectionStart;
+    }
+
+    return pos;
+  }
+
   function onInput(e) {
-    var keyCode = e.keyCode;
+    var keyCode = e.keyCode
+      , target;
 
     if (indexOf.call(IGNORED_KEY_CODES, keyCode) !== -1) return;
 
@@ -144,7 +160,10 @@
          * the value. The solution is to first check cursor position before
          * invoking `complete`.
          */
-        this.complete();
+        target = e.target;
+        if (getCaretPosition(target) === target.value.length) {
+          this.complete();
+        }
         break;
 
       // down
