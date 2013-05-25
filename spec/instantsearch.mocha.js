@@ -73,6 +73,21 @@ describe('$.fn.instantsearch', function () {
     res(results, null);
   }
 
+  function setCaretPosition(input, pos) {
+    var range;
+
+    if (input.createTextRange) {
+      range = input.createTextRange();
+      range.collapse(true);
+      range.moveEnd('character', pos);
+      range.moveStart('character', pos);
+      range.select();
+    } else {
+      input.focus();
+      input.setSelectionRange(pos, pos);
+    }
+  }
+
   beforeEach(function () {
     this.$sandbox = $('#sandbox');
 
@@ -480,33 +495,73 @@ describe('$.fn.instantsearch', function () {
 
           describe('and beginning of input value matches top result', function () {
 
-            beforeEach(function (ready) {
-              this.$input.on('instantsearch.search', function (e) {
-                var $this = $(this);
+            describe('and cursor is at end', function () {
 
-                $this.trigger($.Event('keydown', { keyCode: keyCode }));
-                $this.off('instantsearch.search');
+              beforeEach(function (ready) {
+                this.$input.on('instantsearch.search', function (e) {
+                  var $this = $(this);
 
-                ready();
+                  $this.trigger($.Event('keydown', { keyCode: keyCode }));
+                  $this.off('instantsearch.search');
+
+                  ready();
+                });
+                /**
+                 * "c" (67) then "A" (65) then "l" (76)
+                 *
+                 * Results:
+                 *    [
+                 *      'California'
+                 *    ]
+                 */
+                this.$input.val('cAl');
+                setCaretPosition(this.$input[0], 3);
+                this.$input.trigger($.Event('keydown', { keyCode: 76 }));
               });
-              /**
-               * "c" (67) then "A" (65) then "l" (76)
-               *
-               * Results:
-               *    [
-               *      'California'
-               *    ]
-               */
-              this.$input.val('cAl');
-              this.$input.trigger($.Event('keydown', { keyCode: 76 }));
+
+              it('completes input value', function () {
+                this.$input.val().should.equal('California');
+              });
+
+              it('sets ghost value to empty string', function () {
+                this.$ghost.val().should.equal('');
+              });
+
             });
 
-            it('completes input value', function () {
-              this.$input.val().should.equal('California');
-            });
+            describe('and cursor is not at end', function () {
 
-            it('sets ghost value to empty string', function () {
-              this.$ghost.val().should.equal('');
+              beforeEach(function (ready) {
+                this.$input.on('instantsearch.search', function (e) {
+                  var $this = $(this);
+
+                  $this.trigger($.Event('keydown', { keyCode: keyCode }));
+                  $this.off('instantsearch.search');
+
+                  ready();
+                });
+
+                /**
+                 * "c" (67) then "A" (65) then "l" (76)
+                 *
+                 * Results:
+                 *    [
+                 *      'California'
+                 *    ]
+                 */
+                this.$input.val('cAl');
+                setCaretPosition(this.$input[0], 2);
+                this.$input.trigger($.Event('keydown', { keyCode: 76 }));
+              });
+
+              it('does not complete input value', function () {
+                this.$input.val().should.equal('cAl');
+              });
+
+              it('does not change ghost value', function () {
+                this.$ghost.val().should.equal('cAlifornia');
+              });
+
             });
 
           });
@@ -534,6 +589,7 @@ describe('$.fn.instantsearch', function () {
                *    ]
                */
               this.$input.val('cA');
+              setCaretPosition(this.$input[0], 2);
               this.$input.trigger($.Event('keydown', { keyCode: 65 }));
             });
 
