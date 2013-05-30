@@ -152,18 +152,8 @@
 
       // right
       case 39:
-        /**
-         * 'right' is a little more complicated. Most of the time we can assume
-         * that the last cursor will be at the end of the input string. However,
-         * in the case where the cursor is moved to another position (e.g.
-         * moving the cursor via the mouse), the 'right' key should not complete
-         * the value. The solution is to first check cursor position before
-         * invoking `complete`.
-         */
         target = e.target;
-        if (getCaretPosition(target) === target.value.length) {
-          this.complete();
-        }
+        if (getCaretPosition(target) === target.value.length) this.complete();
         break;
 
       // down
