@@ -1,10 +1,16 @@
+@font-face {
+  font-family: "KenyanCoffeeRg-Italic";
+  src: url(../fonts/kenyan_coffee_italic.otf) format('opentype');
+}
+
 * {
   font-family: "Helvetica Neue", Arial, sans-serif;
 }
 
 .banner {
-  background: url(../img/instantsearch.svg) no-repeat;
-  background-size: 100%;
+  font-family: "KenyanCoffeeRg-Italic", "Helvetica Neue", "Arial";
+  font-weight: normal;
+  font-size: 75px;
   height: 80px;
   margin: 150px auto 30px auto;
   width: 350px;
