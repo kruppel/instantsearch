@@ -3,5 +3,15 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="175px" height="40px" viewBox="0 0 175 40" enable-background="new 0 0 175 40" xml:space="preserve">
+<defs>
+<style type="text/css">
+<![CDATA[
+@font-face {
+  font-family: "KenyanCoffeeRg-Italic";
+  src: url(http://kruppel.github.io/instantsearch/fonts/kenyan_coffee_italic.otf);
+}
+]]>
+</style>
+</defs>
 <text transform="matrix(1 0 0 1 1 36)" font-family="'KenyanCoffeeRg-Italic'" font-size="39">InstantSearch</text>
 </svg>
